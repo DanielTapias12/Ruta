@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Lock } from 'lucide-react';
+import { Sparkles, Lock, ShieldCheck, LogOut, KeyRound } from 'lucide-react';
 import { storageService, AppUser } from '../services/storageService';
 import { LabSIELogo } from './LabSIELogo';
 
@@ -9,6 +9,7 @@ interface HeaderProps {
   currentUser: AppUser;
   isTestUnlocked?: boolean;
   onOpenWelcomeModal?: () => void;
+  onOpenAdminAuthModal?: () => void;
   onActivateRoute?: () => void;
   onDeactivateRoute?: () => void;
 }
@@ -19,18 +20,27 @@ export const Header: React.FC<HeaderProps> = ({
   currentUser,
   isTestUnlocked = false,
   onOpenWelcomeModal,
+  onOpenAdminAuthModal,
   onActivateRoute,
   onDeactivateRoute
 }) => {
   const isAdmin = currentUser.role === 'admin';
 
-  const handleRoleToggle = () => {
-    storageService.setAdminRole(!isAdmin);
-    if (!isAdmin) {
+  const handleAdminClick = () => {
+    if (isAdmin) {
       onNavigate('admin');
     } else {
-      onNavigate('welcome');
+      if (onOpenAdminAuthModal) {
+        onOpenAdminAuthModal();
+      } else {
+        onNavigate('admin');
+      }
     }
+  };
+
+  const handleLogoutAdmin = () => {
+    storageService.logoutAdmin();
+    onNavigate('welcome');
   };
 
   return (
@@ -85,25 +95,32 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             {!isTestUnlocked && <Lock className="w-3.5 h-3.5 text-[#B45309]" />}
-            <span>Test de Exploración</span>
+            <span>Test Vocacional</span>
             {isTestUnlocked && (
               <span className="px-1.5 py-0.2 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[10px] font-bold">
                 Activo
               </span>
             )}
           </button>
+
+          {/* Admin Tab: Clearly marked with lock or shield */}
           <button
-            onClick={() => onNavigate('admin')}
-            className={`cursor-pointer transition-colors hover:text-[#059669] pb-0.5 ${
+            onClick={handleAdminClick}
+            className={`cursor-pointer transition-colors hover:text-[#059669] pb-0.5 flex items-center gap-1.5 ${
               currentView === 'admin' ? 'text-[#059669] font-bold border-b-2 border-[#10B981]' : 'text-[#1C2624]'
             }`}
           >
-            Panel Administrativo
+            {isAdmin ? (
+              <ShieldCheck className="w-3.5 h-3.5 text-[#059669]" />
+            ) : (
+              <Lock className="w-3.5 h-3.5 text-[#3F4E4C]" />
+            )}
+            <span>Panel de Coordinación</span>
           </button>
         </nav>
 
         {/* Zone 3: Primary Actions & Role Mode */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           {onOpenWelcomeModal && (
             <button
               onClick={onOpenWelcomeModal}
@@ -115,16 +132,38 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          <button
-            onClick={handleRoleToggle}
-            className="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-lg border-2 border-[#CCD4CF] bg-[#FFFDF9] text-[#24302F] hover:bg-[#ECFDF5] hover:border-[#10B981] transition-colors whitespace-nowrap shadow-xs"
-            title={isAdmin ? 'Cambiar a modo Estudiante' : 'Cambiar a modo Coordinación LabSIE'}
-            style={{ color: '#24302F' }}
-          >
-            {isAdmin ? 'Modo: Coordinador' : 'Modo: Estudiante'}
-          </button>
+          {/* Separation of Student vs Admin Actions */}
+          {isAdmin ? (
+            <div className="flex items-center gap-1.5">
+              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-md bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46]">
+                <ShieldCheck className="w-3 h-3 text-[#059669]" />
+                <span>Admin Activo</span>
+              </span>
+              <button
+                onClick={handleLogoutAdmin}
+                className="cursor-pointer text-xs font-bold px-2.5 py-1.5 rounded-lg border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-colors flex items-center gap-1 shadow-xs"
+                title="Cerrar sesión de administrador y regresar a modo Estudiante"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-600" />
+                <span className="hidden sm:inline">Cerrar Sesión</span>
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                if (onOpenAdminAuthModal) onOpenAdminAuthModal();
+                else onNavigate('admin');
+              }}
+              className="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-lg border-2 border-[#CCD4CF] bg-[#FFFDF9] text-[#24302F] hover:bg-[#ECFDF5] hover:border-[#10B981] transition-colors whitespace-nowrap shadow-xs flex items-center gap-1.5"
+              title="Acceso exclusivo para docentes y coordinación con clave única"
+            >
+              <KeyRound className="w-3.5 h-3.5 text-[#059669]" />
+              <span className="hidden sm:inline">Acceso Coordinador</span>
+              <span className="sm:hidden">Admin</span>
+            </button>
+          )}
 
-          {/* Botón directo de Activar Ruta / Realizar Test (sin menús extraños en la esquina) */}
+          {/* Botón directo de Activar Ruta / Realizar Test */}
           {currentView !== 'test' && (
             <button
               type="button"

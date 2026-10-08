@@ -128,7 +128,8 @@ export const TestView: React.FC<TestViewProps> = ({
     '¿Cómo detectar patrones en los datos?',
     '¿Cómo saber si una estrategia funciona?',
     '¿Cómo podría hacerse algo de una manera diferente?',
-    '¿Qué podría ocurrir si cambiamos una determinada condición?'
+    '¿Qué podría ocurrir si cambiamos una determinada condición?',
+    '¿Cómo pueden los sistemas de IA monitorear, evaluar y regular su propio razonamiento de forma autónoma (metacognición artificial)?'
   ];
 
   // Section 3 Activities
@@ -162,6 +163,7 @@ export const TestView: React.FC<TestViewProps> = ({
     'Una IA que adapta actividades.',
     'Una IA que intenta comprender el comportamiento humano.',
     'Una IA que evalúa sus propias respuestas.',
+    'Metacognición Artificial: Agentes que monitorean, evalúan y autorregulan su razonamiento (Object Level vs Meta Level).',
     'Una IA que ayuda a tomar decisiones.',
     'Una IA que genera recursos educativos.',
     'Investigar los límites y riesgos de la IA.'

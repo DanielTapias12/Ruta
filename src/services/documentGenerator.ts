@@ -223,6 +223,53 @@ export async function generatePDFReport(
   addParagraph(`Contexto / Población sugerida: ${analysis.proposedProject.possibleContextPopulation}`);
   addParagraph(`Posible aporte al semillero: ${analysis.proposedProject.possibleContribution}`);
 
+  // SECCIÓN 08-B: Síntesis de los 3 Puntos de Vista Analizados
+  if (analysis.perspectives && analysis.perspectives.length > 0) {
+    addSectionTitle('08-B', 'Síntesis de los 3 Puntos de Vista Analizados');
+    analysis.perspectives.forEach(p => {
+      checkPageBreak(18);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(5, 150, 105);
+      doc.text(`• ${p.title} (${p.correspondenceScore}% afinidad):`, margin, y);
+      y += 4.5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(36, 48, 47);
+      const descLines = doc.splitTextToSize(`Enfoque: ${p.shortDescription} | Metodología: ${p.methodologyFocus.type}`, contentWidth - 4);
+      doc.text(descLines, margin + 4, y);
+      y += descLines.length * 4.2 + 3;
+    });
+  }
+
+  // SECCIÓN 08-C: 3 Opciones de Proyectos Nuevos Formuladas
+  if (analysis.proposedProjectOptions && analysis.proposedProjectOptions.length > 0) {
+    addSectionTitle('08-C', '3 Opciones de Proyectos Nuevos Formuladas');
+    analysis.proposedProjectOptions.forEach(opt => {
+      checkPageBreak(25);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(36, 48, 47);
+      doc.text(`[${opt.badge}]`, margin, y);
+      y += 4.5;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(5, 150, 105);
+      const titleLines = doc.splitTextToSize(`Título: ${opt.tentativeTitle}`, contentWidth - 4);
+      doc.text(titleLines, margin + 4, y);
+      y += titleLines.length * 4 + 2;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(70, 75, 74);
+      const qLines = doc.splitTextToSize(`Pregunta: "${opt.tentativeQuestion}"`, contentWidth - 4);
+      doc.text(qLines, margin + 4, y);
+      y += qLines.length * 3.8 + 2;
+      const objLines = doc.splitTextToSize(`Objetivo: ${opt.tentativeObjective}`, contentWidth - 4);
+      doc.text(objLines, margin + 4, y);
+      y += objLines.length * 3.8 + 3;
+    });
+  }
+
   // SECCIÓN 09: Línea de investigación sugerida
   addSectionTitle('09', 'Línea de investigación sugerida');
   addParagraph(`Línea sugerida: ${analysis.primaryLineName}.`);
@@ -496,6 +543,28 @@ export async function generateDOCXReport(
   children.push(createP(`Conceptos centrales: ${analysis.proposedProject.centralConcepts.join(', ')}`));
   children.push(createP(`Población y contexto: ${analysis.proposedProject.possibleContextPopulation}`));
   children.push(createP(`Posible aporte: ${analysis.proposedProject.possibleContribution}`));
+
+  // Section 08-B: Síntesis de los 3 Puntos de Vista Analizados
+  if (analysis.perspectives && analysis.perspectives.length > 0) {
+    children.push(createHeading('08-B. Síntesis de los 3 Puntos de Vista Analizados', HeadingLevel.HEADING_2));
+    analysis.perspectives.forEach(p => {
+      children.push(createP(`• ${p.title} (${p.correspondenceScore}% afinidad):`, true));
+      children.push(createP(`Enfoque: ${p.shortDescription}`));
+      children.push(createP(`Metodología: ${p.methodologyFocus.type} - ${p.methodologyFocus.description}`));
+    });
+  }
+
+  // Section 08-C: 3 Opciones de Proyectos Nuevos Formuladas
+  if (analysis.proposedProjectOptions && analysis.proposedProjectOptions.length > 0) {
+    children.push(createHeading('08-C. 3 Opciones de Proyectos Nuevos Formuladas a partir del Análisis', HeadingLevel.HEADING_2));
+    analysis.proposedProjectOptions.forEach(opt => {
+      children.push(createP(`[${opt.badge}]`, true));
+      children.push(createP(`Título tentativo: ${opt.tentativeTitle}`));
+      children.push(createP(`Pregunta de investigación: "${opt.tentativeQuestion}"`));
+      children.push(createP(`Objetivo general: ${opt.tentativeObjective}`));
+      children.push(createP(`Metodología: ${opt.methodology.name}`));
+    });
+  }
 
   // Section 09: Línea
   children.push(createHeading('09. Línea de investigación sugerida', HeadingLevel.HEADING_2));

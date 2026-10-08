@@ -18,7 +18,9 @@ import {
   ChevronRight,
   ArrowLeft,
   Save,
-  AlertTriangle
+  AlertTriangle,
+  ShieldCheck,
+  KeyRound
 } from 'lucide-react';
 import {
   AnalysisResult,
@@ -28,7 +30,7 @@ import {
   AdminDecision,
   AdminReview
 } from '../types';
-import { storageService } from '../services/storageService';
+import { storageService, MASTER_ADMIN_KEY } from '../services/storageService';
 import { generatePDFReport, generateDOCXReport } from '../services/documentGenerator';
 import { getProjectMethodology } from '../data/projectMetadata';
 import { AdminProjectModal } from './AdminProjectModal';
@@ -40,13 +42,15 @@ interface AdminDashboardProps {
   projects: ResearchProject[];
   lines: ResearchLine[];
   onRefreshData: () => void;
+  onExitAdmin?: () => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   analyses,
   projects,
   lines,
-  onRefreshData
+  onRefreshData,
+  onExitAdmin
 }) => {
   const [activeTab, setActiveTab] = useState<'panorama' | 'estudiantes' | 'proyectos' | 'lineas'>('panorama');
   const [selectedAnalysis, setSelectedAnalysis] = useState<AnalysisResult | null>(null);
@@ -437,6 +441,35 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
 
+              {/* SÍNTESIS DE LOS 3 PUNTOS DE VISTA */}
+              {selectedAnalysis.perspectives && selectedAnalysis.perspectives.length > 0 && (
+                <div className="md:col-span-2 p-5 rounded-xl bg-[#ECFDF5] border-2 border-[#10B981] space-y-3">
+                  <span className="font-semibold text-[#059669] uppercase tracking-wider text-[11px] block">
+                    3 Puntos de Vista Analizados del Estudiante
+                  </span>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {selectedAnalysis.perspectives.map((persp) => (
+                      <div key={persp.id} className="p-3.5 rounded-xl bg-[#FFFDF9] border border-[#A7F3D0] space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[#1C2624] flex items-center gap-1">
+                            <span>{persp.icon}</span>
+                            <span>{persp.id === 'tecnologico' ? 'Tecnológico' : persp.id === 'pedagogico' ? 'Pedagógico' : 'Social'}</span>
+                          </span>
+                          <span className="font-bold text-[#059669] text-[11px] bg-[#ECFDF5] px-1.5 py-0.5 rounded border border-[#A7F3D0]">
+                            {persp.correspondenceScore}%
+                          </span>
+                        </div>
+                        <p className="font-semibold text-[#059669] text-[11px]">{persp.archetype}</p>
+                        <p className="text-[#3F4E4C] text-[11px] line-clamp-2">{persp.shortDescription}</p>
+                        <span className="inline-block text-[10px] font-bold text-[#24302F] bg-[#F7F3ED] px-2 py-0.5 rounded border border-[#CCD4CF]">
+                          {persp.methodologyFocus.type}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* 08 POSIBLE PROYECTO */}
               <div className="md:col-span-2 p-5 rounded-xl bg-[#F7F3ED] border-2 border-[#CCD4CF] space-y-2">
                 <span className="font-semibold text-[#059669] uppercase tracking-wider text-[11px] block">
@@ -452,6 +485,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   Objetivo: {selectedAnalysis.proposedProject.tentativeObjective}
                 </p>
               </div>
+
+              {/* 3 OPCIONES DE PROYECTOS FORMULADAS */}
+              {selectedAnalysis.proposedProjectOptions && selectedAnalysis.proposedProjectOptions.length > 0 && (
+                <div className="md:col-span-2 p-5 rounded-xl bg-[#FFFDF9] border-2 border-[#CCD4CF] space-y-3">
+                  <span className="font-semibold text-[#059669] uppercase tracking-wider text-[11px] block">
+                    3 Opciones de Proyectos Nuevos Formuladas para el Estudiante
+                  </span>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {selectedAnalysis.proposedProjectOptions.map((opt) => {
+                      const isChosen = selectedAnalysis.selectedProjectOptionId === opt.id;
+                      return (
+                        <div
+                          key={opt.id}
+                          className={`p-3.5 rounded-xl border text-xs space-y-1.5 ${
+                            isChosen
+                              ? 'bg-[#ECFDF5] border-[#10B981] shadow-xs'
+                              : 'bg-[#F7F3ED] border-[#CCD4CF]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-[#1C2624] flex items-center gap-1">
+                              <span>{opt.icon}</span>
+                              <span className="truncate">{opt.badge}</span>
+                            </span>
+                            {isChosen && (
+                              <span className="text-[10px] font-bold bg-[#059669] text-white px-1.5 py-0.5 rounded">
+                                Preferida ★
+                              </span>
+                            )}
+                          </div>
+                          <p className="font-serif font-bold text-[#059669] text-xs line-clamp-2">
+                            {opt.tentativeTitle}
+                          </p>
+                          <p className="text-[#3F4E4C] text-[11px] italic line-clamp-2">
+                            "{opt.tentativeQuestion}"
+                          </p>
+                          <span className="inline-block text-[10px] text-[#4A5568]">
+                            Metodología: {opt.methodology.name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* SECTIONS 09 & 10: DECISIÓN ADMINISTRATIVA Y OBSERVACIONES */}

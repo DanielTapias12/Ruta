@@ -80,18 +80,18 @@ export const HeritageExplorer: React.FC<HeritageExplorerProps> = ({
         </p>
       </div>
 
-      {/* 4 Líneas de Investigación Tabs / Pills */}
+      {/* Líneas de Investigación Tabs / Pills */}
       <div className="mb-6 space-y-2">
         <div className="flex items-center justify-between text-xs font-bold text-[#059669]">
           <span className="uppercase tracking-wider flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-[#10B981]" />
-            Las 4 Líneas Oficiales de Investigación LabSIE · EduTLAN:
+            Líneas Oficiales de Investigación LabSIE · EduTLAN ({lines.length} Líneas):
           </span>
           <span className="text-[#3F4E4C] font-medium hidden sm:inline">
             Filtra por línea con un clic
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2.5">
           <button
             type="button"
             onClick={() => setSelectedLineFilter('all')}
@@ -122,7 +122,7 @@ export const HeritageExplorer: React.FC<HeritageExplorerProps> = ({
             </span>
           </button>
 
-          {lines.slice(0, 4).map((line, idx) => {
+          {lines.map((line, idx) => {
             const isSelected = selectedLineFilter === line.id;
             const lineProjectsCount = projects.filter(p => p.lineId === line.id).length;
             return (

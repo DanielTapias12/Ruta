@@ -5,14 +5,18 @@ import {
   AdminReview
 } from '../types';
 import { INITIAL_PROJECTS, INITIAL_RESEARCH_LINES, DEMO_ANALYSES } from '../data/initialData';
+import { syncAnalysisToSupabase } from './supabaseClient';
 
 const STORAGE_KEYS = {
-  PROJECTS: 'labsie_research_projects_v10',
-  LINES: 'labsie_research_lines_v10',
-  ANALYSES: 'labsie_analysis_results_v10',
-  CURRENT_USER: 'labsie_current_user_v10',
-  SEMILLERO_AFFILIATION: 'labsie_semillero_affiliation_v10'
+  PROJECTS: 'labsie_research_projects_v11',
+  LINES: 'labsie_research_lines_v11',
+  ANALYSES: 'labsie_analysis_results_v11',
+  CURRENT_USER: 'labsie_current_user_v11',
+  SEMILLERO_AFFILIATION: 'labsie_semillero_affiliation_v11',
+  ADMIN_AUTH: 'labsie_admin_authenticated_v1'
 };
+
+export const MASTER_ADMIN_KEY = 'LABSIE-ADMIN-2026-ROOT';
 
 export interface AppUser {
   id: string;
@@ -63,10 +67,10 @@ class StorageService {
       const storedLines = localStorage.getItem(STORAGE_KEYS.LINES);
       if (storedLines) {
         this.lines = JSON.parse(storedLines);
-        // Guarantee synchronization with the official 4 research lines exclusively
+        // Guarantee synchronization with all official research lines (including Artificial Metacognition)
         const validIds = new Set(INITIAL_RESEARCH_LINES.map(l => l.id));
         const allPresent = INITIAL_RESEARCH_LINES.every(l => this.lines.some(cur => cur.id === l.id));
-        if (this.lines.length !== 4 || !allPresent || this.lines.some(l => !validIds.has(l.id))) {
+        if (this.lines.length !== INITIAL_RESEARCH_LINES.length || !allPresent || this.lines.some(l => !validIds.has(l.id))) {
           this.lines = [...INITIAL_RESEARCH_LINES];
           this.persistLines();
         }
@@ -143,21 +147,61 @@ class StorageService {
     this.notify();
   }
 
-  public setAdminRole(isAdmin: boolean) {
-    if (isAdmin) {
+  public getAdminAccessKey(): string {
+    return MASTER_ADMIN_KEY;
+  }
+
+  public verifyAdminKey(key: string): boolean {
+    if (!key) return false;
+    return key.trim().toUpperCase() === MASTER_ADMIN_KEY.toUpperCase();
+  }
+
+  public isAdminAuthenticated(): boolean {
+    try {
+      const val = localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH);
+      return val === 'true' && this.currentUser.role === 'admin';
+    } catch {
+      return false;
+    }
+  }
+
+  public loginAdmin(key: string): boolean {
+    if (this.verifyAdminKey(key)) {
+      try {
+        localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
+      } catch (e) {
+        console.error(e);
+      }
       this.setCurrentUser({
         id: 'admin-01',
         name: 'Coordinación LabSIE / EduTLAN',
         email: 'labsie.edutlan@unicordoba.edu.co',
         role: 'admin'
       });
+      return true;
+    }
+    return false;
+  }
+
+  public logoutAdmin(): void {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
+    } catch (e) {
+      console.error(e);
+    }
+    this.setCurrentUser({
+      id: 'student-demo',
+      name: 'Estudiante LabSIE',
+      email: 'estudiante@correo.unicordoba.edu.co',
+      role: 'student'
+    });
+  }
+
+  public setAdminRole(isAdmin: boolean) {
+    if (isAdmin) {
+      this.loginAdmin(MASTER_ADMIN_KEY);
     } else {
-      this.setCurrentUser({
-        id: 'student-demo',
-        name: 'Estudiante LabSIE',
-        email: 'estudiante@correo.unicordoba.edu.co',
-        role: 'student'
-      });
+      this.logoutAdmin();
     }
   }
 
@@ -261,6 +305,18 @@ class StorageService {
     }
     this.persistAnalyses();
     this.notify();
+    // Async background sync to Supabase
+    syncAnalysisToSupabase(analysis).catch(err => console.warn('Supabase sync warning:', err));
+  }
+
+  public updateSelectedProjectOption(analysisId: string, optionId: string): void {
+    const target = this.analyses.find(a => a.id === analysisId);
+    if (target) {
+      target.selectedProjectOptionId = optionId;
+      this.persistAnalyses();
+      this.notify();
+      syncAnalysisToSupabase(target).catch(err => console.warn('Supabase sync warning:', err));
+    }
   }
 
   public updateAdminReview(analysisId: string, review: AdminReview): void {
@@ -269,6 +325,7 @@ class StorageService {
       target.adminReview = review;
       this.persistAnalyses();
       this.notify();
+      syncAnalysisToSupabase(target).catch(err => console.warn('Supabase sync warning:', err));
     }
   }
 

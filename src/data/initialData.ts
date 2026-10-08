@@ -32,6 +32,27 @@ export const INITIAL_RESEARCH_LINES: ResearchLine[] = [
     keywords: ['Inteligencia Artificial', 'Aprendizaje Personalizado', 'Retroalimentación Inteligente', 'IA Generativa', 'Tutorías Personalizadas'],
     status: 'active',
     createdAt: '2023-01-15'
+  },
+  {
+    id: 'line-artificial-metacognition',
+    name: 'Artificial Metacognition',
+    description: 'Línea de investigación centrada en sistemas de metacognición endógena en IA. Define la capacidad de los agentes artificiales de monitorear, evaluar y regular autónomamente su razonamiento mediante una interacción estructurada y auditable entre el Object Level (ejecución) y el Meta Level (monitoreo y control). Integra y unifica CPCC, Meta-DNA, Dendritic Metacognition (DMA), MARINA-10, MetaLingua++, Cortico-Claustrum, Explainable Control e IM-Onto.',
+    keywords: [
+      'Artificial Metacognition',
+      'Metacognición Endógena',
+      'Object Level',
+      'Meta Level',
+      'CPCC',
+      'Meta-DNA',
+      'Dendritic Metacognition (DMA)',
+      'MARINA-10',
+      'MetaLingua++',
+      'Cortico-Claustrum',
+      'Explainable Control',
+      'IM-Onto'
+    ],
+    status: 'active',
+    createdAt: '2024-01-10'
   }
 ];
 
@@ -571,8 +592,8 @@ export const INITIAL_PROJECTS: ResearchProject[] = [
     id: 'proj-20',
     code: 'LABSIE-P20',
     title: 'CARINA MIRROR Test: un benchmark conductual para la Metacognición Artificial en LLMs',
-    lineId: 'line-diseno-sistemas-inteligentes',
-    lineName: 'Diseño e implementación de sistemas inteligentes para la educación',
+    lineId: 'line-artificial-metacognition',
+    lineName: 'Artificial Metacognition',
     description: 'Protocolos experimentales de sondeo y perturbación para medir autoconocimiento, calibración y detección de errores en IA.',
     problem: 'Falta de instrumentos empíricos para medir la autocalibración y metacognición en modelos fundacionales de IA usados en educación.',
     question: '¿En qué medida el test CARINA MIRROR permite cuantificar la capacidad de autorrevisión de un LLM en tareas pedagógicas?',
@@ -740,6 +761,93 @@ export const INITIAL_PROJECTS: ResearchProject[] = [
     status: 'completed',
     year: '2023',
     leadResearcher: 'Equipo LabSIE · EduTLAN'
+  },
+  {
+    id: 'proj-26',
+    code: 'LABSIE-P26',
+    title: 'Arquitectura Cortico-Claustrum y CPCC: Protocolo de comunicación cortical para control metacognitivo explicable en agentes IA',
+    lineId: 'line-artificial-metacognition',
+    lineName: 'Artificial Metacognition',
+    description: 'Implementación del protocolo de comunicación cortical (CPCC) inspirado en la interacción cortico-claustrum para arbitrar el flujo bidireccional entre el Object Level (ejecución) y el Meta Level (monitoreo introspectivo y control explicable).',
+    problem: 'La opacidad de los agentes autónomos de IA y su incapacidad para justificar formalmente sus decisiones de autorrevisión en tiempo de inferencia pedagógica.',
+    question: '¿De qué manera una arquitectura bioinspirada Cortico-Claustrum y el protocolo CPCC garantizan un control metacognitivo explicable y auditable entre el Object Level y el Meta Level en agentes pedagógicos?',
+    generalObjective: 'Diseñar, implementar y evaluar el protocolo CPCC dentro de una arquitectura Cortico-Claustrum para el control metacognitivo explicable y la regulación autónoma del razonamiento.',
+    context: 'Arquitecturas cognitivas endógenas y agentes tutores inteligentes, Grupo EduTLAN.',
+    population: 'Agentes pedagógicos autónomos y modelos de razonamiento guiado en educación.',
+    concepts: ['Cortico-Claustrum', 'CPCC', 'Explainable Control', 'Object Level', 'Meta Level', 'Metacognición Endógena'],
+    methodology: 'Investigación en Arquitecturas Cognitivas & Ingeniería de Software de IA. Modelado formal del protocolo CPCC, simulación bioinspirada claustro-cortical y validación empírica de auditabilidad.',
+    results: 'Protocolo CPCC validado con trazas auditables y reducción del 42% en alucinaciones no detectadas.',
+    limitaciones: 'Latencia computacional introducida por la capa de arbitraje claustro-cortical.',
+    openQuestions: [
+      '¿Cómo optimizar el canal de control explicable sin degradar el tiempo de respuesta del agente en el aula?',
+      '¿Qué nivel de granularidad formal del Meta Level es óptimo para la comprensión del docente tutor?'
+    ],
+    continuityPossibilities: [
+      'Integrar el protocolo CPCC en asistentes tutoriales sincrónicos de LabSIE.',
+      'Conectar el control explicable con rúbricas formativas audibles para docentes de la Licenciatura.'
+    ],
+    keywords: ['Cortico-Claustrum', 'CPCC', 'Explainable Control', 'Object Level', 'Meta Level', 'Metacognición Endógena', 'Artificial Metacognition'],
+    status: 'active',
+    year: '2024',
+    leadResearcher: 'Equipo LabSIE · EduTLAN'
+  },
+  {
+    id: 'proj-27',
+    code: 'LABSIE-P27',
+    title: 'Meta-DNA y Dendritic Metacognition (DMA): Rastreo evolutivo y autorregulación sináptica en modelos cognitivos para la educación',
+    lineId: 'line-artificial-metacognition',
+    lineName: 'Artificial Metacognition',
+    description: 'Modelado computacional de metacognición dendrítica (DMA) y codificación epigenética de estrategias heurísticas (Meta-DNA) para permitir que los agentes adapten y regulen sus estrategias didácticas según su propio historial de razonamiento.',
+    problem: 'La rigidez adaptativa de los tutores virtuales frente a errores conceptuales complejos y la falta de memoria evolutiva en sus decisiones meta-cognitivas.',
+    question: '¿Cómo incide la articulación entre Dendritic Metacognition (DMA) y la estructura Meta-DNA en la autorregulación sináptica de agentes tutores autónomos?',
+    generalObjective: 'Modelar e implementar el framework DMA y la arquitectura Meta-DNA para dotar a agentes de tutoría de autorregulación sináptica y memoria evolutiva auditable.',
+    context: 'Entornos de aprendizaje adaptativo, Universidad de Córdoba.',
+    population: 'Sistemas inteligentes tutores y estudiantes de programación.',
+    concepts: ['Meta-DNA', 'Dendritic Metacognition (DMA)', 'Autorregulación Sináptica', 'Plasticidad Cognitiva', 'IM-Onto'],
+    methodology: 'Modelado Bioinspirado y Experimentación Computacional. Simulación dendrítica computacional y seguimiento genómico de estrategias heurísticas.',
+    results: 'Framework DMA operativo con adaptación dinámica de tasas de aprendizaje reflexivo.',
+    limitaciones: 'Requiere calibración previa de perfiles de interacción estudiantil.',
+    openQuestions: [
+      '¿Cómo trasladar la plasticidad del Meta-DNA a contextos pedagógicos interdisciplinares?',
+      '¿En qué medida el DMA previene la degradación catastrófica del conocimiento en el agente?'
+    ],
+    continuityPossibilities: [
+      'Vincular la firma de Meta-DNA con las trayectorias de Knowledge Tracing de estudiantes reales.',
+      'Publicar librerías de DMA de código abierto para semilleristas de informática.'
+    ],
+    keywords: ['Meta-DNA', 'DMA', 'Dendritic Metacognition', 'Autorregulación Sináptica', 'Artificial Metacognition'],
+    status: 'active',
+    year: '2024',
+    leadResearcher: 'Equipo LabSIE · EduTLAN'
+  },
+  {
+    id: 'proj-28',
+    code: 'LABSIE-P28',
+    title: 'MARINA-10 y MetaLingua++: Marco de introspección semántica y ontología formal IM-Onto para auditoría de razonamiento',
+    lineId: 'line-artificial-metacognition',
+    lineName: 'Artificial Metacognition',
+    description: 'Unificación del marco MARINA-10 con el lenguaje introspectivo MetaLingua++ y la ontología formal IM-Onto para auditar, formalizar y verificar en tiempo real las trayectorias de razonamiento de agentes en entornos formativos.',
+    problem: 'La ausencia de una ontología formal unificada y un lenguaje simbólico auditable para expresar los estados introspectivos de la IA en tiempo real.',
+    question: '¿Cómo unifica la ontología IM-Onto y el lenguaje MetaLingua++ dentro de MARINA-10 la verificación semántica del razonamiento entre el Object Level y el Meta Level?',
+    generalObjective: 'Construir y validar la ontología IM-Onto y el lenguaje MetaLingua++ integrados en MARINA-10 para la auditoría y certificación formal del razonamiento artificial.',
+    context: 'Investigación en Inteligencia Artificial Simbólica y Neuro-simbólica, LabSIE.',
+    population: 'Agentes conversacionales educativos y evaluadores formales de conocimiento.',
+    concepts: ['MARINA-10', 'MetaLingua++', 'IM-Onto', 'Auditoría de Razonamiento', 'Introspección Semántica', 'Verificación Formal'],
+    methodology: 'Ingeniería Ontológica y Métodos Formales Neuro-Simbólicos. Desarrollo de IM-Onto según estándares W3C/OWL y parser para MetaLingua++.',
+    results: 'Ontología IM-Onto con 120 axiomas de introspección y banco de pruebas MARINA-10 formalizado.',
+    limitaciones: 'Complejidad computacional en razonamiento ontológico para corpus masivos en tiempo real.',
+    openQuestions: [
+      '¿Puede MetaLingua++ servir como estándar de interoperabilidad entre agentes educativos de diferentes proveedores?',
+      '¿Cómo mapear las descripciones ontológicas de IM-Onto en explicaciones directas para estudiantes novatos?'
+    ],
+    continuityPossibilities: [
+      'Integrar IM-Onto como estándar de evaluación de explicabilidad en el grupo EduTLAN.',
+      'Desarrollar un visor visual de introspección en tiempo real para laboratorios de informática.'
+    ],
+    keywords: ['MARINA-10', 'MetaLingua++', 'IM-Onto', 'Auditoría de Razonamiento', 'Artificial Metacognition', 'Meta Level'],
+    status: 'active',
+    year: '2024',
+    leadResearcher: 'Equipo LabSIE · EduTLAN'
   }
 ];
 
@@ -817,6 +925,222 @@ export const DEMO_ANALYSES: AnalysisResult[] = [
       ],
       statusLabel: 'PROPUESTA PRELIMINAR — SUJETA A VALIDACIÓN'
     },
+    perspectives: [
+      {
+        id: 'tecnologico',
+        title: 'Enfoque Tecnológico y Prototipado con IA',
+        badge: '💻 Sistemas Inteligentes & Software Educativo',
+        icon: '💻',
+        shortDescription: 'Orientado al modelado matemático de Knowledge Tracing, algoritmos secuenciales de Markov y tableros interactivos para estudiantes.',
+        focusArea: 'Ingeniería de Software Educativo, Analítica del Aprendizaje y Algoritmos Inteligentes',
+        archetype: 'El Analista 📊 · Modelador de Knowledge Tracing y Software Educativo',
+        routeType: 'HEREDAR',
+        correspondenceScore: 92,
+        correspondenceLevel: 'Alta correspondencia',
+        primaryLineId: 'line-analisis-datos-educativos',
+        primaryLineName: 'Análisis de datos educativos para la mejora de la enseñanza',
+        methodologyFocus: {
+          type: 'Design-Based Research (DBR) & Prototipado de Software',
+          icon: '⚡',
+          description: 'Modelado algorítmico, desarrollo iterativo del dashboard de autoregulación y validación de métricas de precisión.'
+        },
+        whyExplanation: [
+          'Tu perfil destaca por habilidades analíticas y de desarrollo de software para el modelado de datos educativos en la Licenciatura en Informática.',
+          'Esta perspectiva prioriza la herencia directa de las bases matemáticas del proyecto LABSIE-P03 y P13 en EduTLAN.'
+        ],
+        keyStrengths: [
+          'Manejo de algoritmos y modelado secuencial de datos',
+          'Interés en desarrollo de interfaces y dashboards estudiantiles',
+          'Curiosidad técnica en Knowledge Tracing'
+        ],
+        relatedProjects: [
+          {
+            projectId: 'proj-03',
+            projectTitle: 'Análisis longitudinal de patrones de compromiso mediante cadenas de Markov',
+            projectCode: 'LABSIE-P03',
+            affinity: 92,
+            connectionReason: 'Alineación directa con modelado de datos temporales y secuencias de estudiantes.',
+            matchingConcepts: ['Minería de Datos', 'Cadenas de Markov', 'Rendimiento']
+          },
+          {
+            projectId: 'proj-13',
+            projectTitle: 'Modelo de machine learning para predecir el rendimiento académico',
+            projectCode: 'LABSIE-P13',
+            affinity: 86,
+            connectionReason: 'Modelos predictivos aplicados a asignaturas de tecnología.',
+            matchingConcepts: ['Machine Learning', 'Predicción', 'Analítica']
+          }
+        ],
+        proposedProject: {
+          tentativeTitle: 'Modelado explicable de trayectorias de Knowledge Tracing para la auto-regulación del aprendizaje en programación',
+          tentativeQuestion: '¿De qué manera los indicadores dinámicos de Knowledge Tracing pueden representarse visualmente para que el estudiante autorregule su aprendizaje?',
+          tentativeObjective: 'Diseñar e implementar un módulo visual de autoregulación estudiantil alimentado por Knowledge Tracing.',
+          centralConcepts: ['Knowledge Tracing', 'Autorregulación', 'Didáctica de la Programación'],
+          possibleContextPopulation: 'Estudiantes de Programación de la Licenciatura en Informática (Universidad de Córdoba)',
+          possibleContribution: 'Herramienta de software con analítica predictiva en tiempo real para el semillero.',
+          nextSteps: ['Revisión de repositorios y dataset P03', 'Prototipado del módulo en React'],
+          statusLabel: 'PROPUESTA TECNOLÓGICA PRELIMINAR'
+        }
+      },
+      {
+        id: 'pedagogico',
+        title: 'Enfoque Pedagógico y Didáctica de la Informática',
+        badge: '🎓 Didáctica, Aula & Aprendizaje',
+        icon: '🎓',
+        shortDescription: 'Orientado a cómo la retroalimentación de la analítica incide en la superación de errores conceptuales en programación escolar.',
+        focusArea: 'Didáctica de la Programación, Mediación Formativa y Evaluación del Aprendizaje',
+        archetype: 'El Diseñador Pedagógico en Didáctica de la Computación',
+        routeType: 'CONECTAR',
+        correspondenceScore: 88,
+        correspondenceLevel: 'Alta correspondencia',
+        primaryLineId: 'line-ia-aprendizaje-personalizado',
+        primaryLineName: 'Aplicación de la inteligencia artificial en el aprendizaje personalizado',
+        methodologyFocus: {
+          type: 'Investigación-Acción Pedagógica (IAPed) y Enfoque Mixto',
+          icon: '📖',
+          description: 'Diseño de secuencias didácticas de apoyo para conceptos difíciles de programación y evaluación del impacto pedagógico.'
+        },
+        whyExplanation: [
+          'Desde la didáctica, el valor no reside en la matemática del modelo sino en cómo ayuda al futuro docente a intervenir oportunamente en el aula.',
+          'Permite articular el diagnóstico analítico con la mediación docente activa.'
+        ],
+        keyStrengths: [
+          'Comprensión pedagógica de la frustración del estudiante al programar',
+          'Diseño de rúbricas y estrategias de andamiaje cognitivo',
+          'Orientación hacia la formación del futuro profesor de informática'
+        ],
+        relatedProjects: [
+          {
+            projectId: 'proj-02',
+            projectTitle: 'Estrategia didáctica mediada por pensamiento computacional',
+            projectCode: 'LABSIE-P02',
+            affinity: 85,
+            connectionReason: 'Enfoque formativo directo en el desarrollo de habilidades computacionales en el aula.',
+            matchingConcepts: ['Didáctica', 'Pensamiento Computacional', 'Secuencias']
+          }
+        ],
+        proposedProject: {
+          tentativeTitle: 'Secuencia didáctica mediada por analítica formativa para la superación de obstáculos conceptuales en programación',
+          tentativeQuestion: '¿Cómo incide una secuencia didáctica basada en alertas tempranas en la persistencia y logro de competencias algorítmicas?',
+          tentativeObjective: 'Diseñar y validar una secuencia didáctica que incorpore alertas analíticas formativas en cursos de programación.',
+          centralConcepts: ['Didáctica de la Programación', 'Andamiaje Metacognitivo', 'Evaluación Formativa'],
+          possibleContextPopulation: 'Estudiantes de colegios o universidad en cursos iniciales de informática',
+          possibleContribution: 'Guías didácticas e instrumentos de evaluación pedagógica para la enseñanza de la algoritmia.',
+          nextSteps: ['Mapeo de errores frecuentes en ciclos y condicionales', 'Diseño de la unidad didáctica'],
+          statusLabel: 'PROPUESTA PEDAGÓGICA PRELIMINAR'
+        }
+      },
+      {
+        id: 'social',
+        title: 'Enfoque de Innovación, Gestión y Apropiación Social',
+        badge: '🌐 Impacto Social & Ética Tecnológica',
+        icon: '🌐',
+        shortDescription: 'Orientado a mitigar la deserción temprana en carreras tecnológicas de la región y democratizar el acceso a la formación computacional.',
+        focusArea: 'Apropiación Social, Retención Estudiantil Regional y Ética de Datos',
+        archetype: 'El Gestor de Innovación e Inclusión Educativa',
+        routeType: 'TRASCENDER',
+        correspondenceScore: 84,
+        correspondenceLevel: 'Alta correspondencia',
+        primaryLineId: 'line-entornos-virtuales-adaptativos',
+        primaryLineName: 'Desarrollo de entornos de aprendizaje virtuales y adaptativos',
+        methodologyFocus: {
+          type: 'Investigación Participativa & Evaluación de Impacto Institucional',
+          icon: '🤝',
+          description: 'Sistematización de factores socioeconómicos y tecnológicos para la equidad educativa regional en Córdoba.'
+        },
+        whyExplanation: [
+          'La deserción en informática en universidades públicas del Caribe afecta la movilidad social de jóvenes de la región.',
+          'Esta perspectiva convierte la investigación en una política formativa inclusiva para la retención y éxito de los estudiantes.'
+        ],
+        keyStrengths: [
+          'Compromiso con la permanencia estudiantil y equidad en la Universidad de Córdoba',
+          'Visión ética sobre el uso responsable de algoritmos predictivos sin estigmatizar al estudiante',
+          'Capacidad de articulación institucional con bienestar universitario'
+        ],
+        relatedProjects: [
+          {
+            projectId: 'proj-01',
+            projectTitle: 'Estrategia didáctica mediante gamificación en áreas rurales',
+            projectCode: 'LABSIE-P01',
+            affinity: 82,
+            connectionReason: 'Enfoque contextualizado en la superación de barreras educativas regionales.',
+            matchingConcepts: ['Inclusión', 'Educación Regional', 'Brecha Digital']
+          }
+        ],
+        proposedProject: {
+          tentativeTitle: 'Estrategia integral de acompañamiento sociotécnico para la permanencia estudiantil en la Licenciatura en Informática',
+          tentativeQuestion: '¿De qué forma un ecosistema de soporte sociotécnico contribuye a la equidad y permanencia de estudiantes en informática?',
+          tentativeObjective: 'Estructurar y evaluar una estrategia participativa de acompañamiento que vincule tutorías de pares y analítica ética.',
+          centralConcepts: ['Permanencia Estudiantil', 'Equidad Regional', 'Ética de la IA', 'Acompañamiento Socioeducativo'],
+          possibleContextPopulation: 'Comunidad universitaria de la Licenciatura en Informática (Universidad de Córdoba)',
+          possibleContribution: 'Lineamientos de política institucional para la retención con tecnologías éticas.',
+          nextSteps: ['Articulación con bienestar estudiantil', 'Talleres participativos de diseño ético'],
+          statusLabel: 'PROPUESTA SOCIAL PRELIMINAR'
+        }
+      }
+    ],
+    selectedPerspectiveId: 'tecnologico',
+    proposedProjectOptions: [
+      {
+        id: 'opcion-1',
+        optionNumber: 1,
+        badge: 'Opción 1 · Innovación Tecnológica & IA',
+        icon: '🤖',
+        category: 'Tecnológico & IA',
+        tentativeTitle: 'Modelado explicable de trayectorias de Knowledge Tracing para la auto-regulación del aprendizaje en programación',
+        tentativeQuestion: '¿De qué manera los indicadores dinámicos de Knowledge Tracing pueden representarse visualmente para que el estudiante autorregule su tiempo de práctica en ejercicios de programación?',
+        tentativeObjective: 'Diseñar e implementar un módulo visual de autoregulación estudiantil alimentado por las predicciones secuenciales de un modelo de Knowledge Tracing.',
+        centralConcepts: ['Knowledge Tracing Explicable', 'Autorregulación Cognitiva', 'Didáctica de la Programación', 'Dashboards para Estudiantes'],
+        possibleContextPopulation: 'Estudiantes de Algoritmia y Programación de la Licenciatura en Informática (Universidad de Córdoba)',
+        methodology: {
+          name: 'Design-Based Research (DBR) & Prototipado Ágil de Software',
+          description: 'Modelado matemático, ingeniería de software educativo y validación de métricas de interacción con estudiantes reales.'
+        },
+        whyThisOption: 'Surge de tu marcada afinidad por la analítica de datos, algoritmos de Markov y desarrollo de software aplicado a la educación.',
+        possibleContribution: 'Cerrar la brecha entre la predicción algorítmica y la acción consciente del estudiante sobre su propio proceso de estudio.',
+        nextSteps: ['Revisión del repositorio y dataset LABSIE-P04', 'Prototipado del módulo en React', 'Pruebas de usabilidad en laboratorio'],
+        isHighlighted: true
+      },
+      {
+        id: 'opcion-2',
+        optionNumber: 2,
+        badge: 'Opción 2 · Innovación Didáctica & Aula',
+        icon: '📖',
+        category: 'Didáctico & Aula',
+        tentativeTitle: 'Secuencia didáctica gamificada para la superación de obstáculos conceptuales en estructuras de control algorítmicas',
+        tentativeQuestion: '¿Cómo incide una secuencia didáctica gamificada con retroalimentación temprana en la persistencia y comprensión profunda de ciclos y condicionales?',
+        tentativeObjective: 'Diseñar y validar una secuencia didáctica situada que combine retos lúdicos y andamiajes metacognitivos en el aula de programación.',
+        centralConcepts: ['Didáctica de la Programación', 'Gamificación Educativa', 'Andamiaje Metacognitivo', 'Evaluación Formativa'],
+        possibleContextPopulation: 'Estudiantes de cursos introductorios de informática en educación superior o media técnica',
+        methodology: {
+          name: 'Investigación-Acción Pedagógica (IAPed) & Métodos Mixtos',
+          description: 'Diagnóstico de errores frecuentes, diseño de unidades didácticas activas y medición de aprendizaje pre/post test.'
+        },
+        whyThisOption: 'Surge de tu interés en cómo los estudiantes aprenden y cómo prevenir la frustración temprana en cursos de informática.',
+        possibleContribution: 'Guías didácticas, unidades instruccionales y rúbricas formativas validadas para docentes de programación.',
+        nextSteps: ['Mapeo de errores conceptuales en condicionales', 'Diseño de la secuencia lúdica', 'Validación con docentes de EduTLAN']
+      },
+      {
+        id: 'opcion-3',
+        optionNumber: 3,
+        badge: 'Opción 3 · Apropiación Social & Impacto Regional',
+        icon: '🌐',
+        category: 'Social & Comunitario',
+        tentativeTitle: 'Ecosistema sociotécnico abierto para la prevención temprana de la deserción estudiantil en la Licenciatura en Informática',
+        tentativeQuestion: '¿De qué forma un ecosistema de alertas éticas y tutorías comunitarias entre pares mitiga la deserción en carreras de computación en el Caribe colombiano?',
+        tentativeObjective: 'Estructurar y evaluar una estrategia participativa que integre analítica de datos ética con redes de acompañamiento pedagógico y comunitario.',
+        centralConcepts: ['Permanencia Estudiantil', 'Equidad Educativa Regional', 'Ética de Datos', 'Tutorías de Pares'],
+        possibleContextPopulation: 'Comunidad universitaria de la Licenciatura en Informática (Universidad de Córdoba)',
+        methodology: {
+          name: 'Investigación Acción Participativa (IAP) & Evaluación de Impacto',
+          description: 'Investigación dialógica que involucra a estudiantes, docentes y bienestar universitario en el codiseño de soluciones institucionales.'
+        },
+        whyThisOption: 'Surge de tu visión transformadora sobre el impacto social de la informática en la permanencia de jóvenes de la región.',
+        possibleContribution: 'Lineamientos de política formativa e institucional para la retención con tecnologías éticas en universidades públicas.',
+        nextSteps: ['Mesa de trabajo con bienestar universitario', 'Talleres participativos de diseño ético', 'Sistematización de indicadores']
+      }
+    ],
+    selectedProjectOptionId: 'opcion-1',
     studentAnswers: {
       profile: {
         name: 'María Valentina Ramos',

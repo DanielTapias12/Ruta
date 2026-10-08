@@ -368,6 +368,48 @@ export const PROJECT_METHODOLOGIES: Record<string, ProjectMethodologyInfo> = {
       border: 'border-teal-300',
       pillBg: 'bg-teal-100'
     }
+  },
+  'proj-26': {
+    code: 'LABSIE-P26',
+    badgeTitle: 'Metodología: Arquitectura Cortico-Claustrum & Protocolo CPCC',
+    badgeIcon: '🧠',
+    paradigm: 'Arquitecturas Cognitivas Endógenas & Protocolo CPCC',
+    referenceAuthor: 'Equipo LabSIE · EduTLAN (2024)',
+    summary: 'Protocolo CPCC para arbitrar la interacción bidireccional entre el Object Level y el Meta Level con control explicable.',
+    themeColor: {
+      bg: 'bg-indigo-50',
+      text: 'text-indigo-800',
+      border: 'border-indigo-300',
+      pillBg: 'bg-indigo-100'
+    }
+  },
+  'proj-27': {
+    code: 'LABSIE-P27',
+    badgeTitle: 'Metodología: Dendritic Metacognition (DMA) & Meta-DNA',
+    badgeIcon: '🧬',
+    paradigm: 'Modelado Bioinspirado y Regulación Sináptica',
+    referenceAuthor: 'Equipo LabSIE · EduTLAN (2024)',
+    summary: 'Framework DMA y arquitectura Meta-DNA para autorregulación sináptica y memoria evolutiva en tutores inteligentes.',
+    themeColor: {
+      bg: 'bg-violet-50',
+      text: 'text-violet-800',
+      border: 'border-violet-300',
+      pillBg: 'bg-violet-100'
+    }
+  },
+  'proj-28': {
+    code: 'LABSIE-P28',
+    badgeTitle: 'Metodología: MARINA-10, MetaLingua++ & Ontología IM-Onto',
+    badgeIcon: '📜',
+    paradigm: 'Ingeniería Ontológica y Auditoría Formal Neuro-Simbólica',
+    referenceAuthor: 'Equipo LabSIE · EduTLAN (2024)',
+    summary: 'Ontología IM-Onto y lenguaje MetaLingua++ para verificación semántica e introspección auditable en agentes educativos.',
+    themeColor: {
+      bg: 'bg-purple-50',
+      text: 'text-purple-800',
+      border: 'border-purple-300',
+      pillBg: 'bg-purple-100'
+    }
   }
 };
 

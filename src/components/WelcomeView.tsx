@@ -197,7 +197,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({
         </div>
       </div>
 
-      {/* Las 4 Líneas de Investigación Oficiales */}
+      {/* Las 5 Líneas de Investigación Oficiales */}
       <div className="mt-16 md:mt-24 space-y-8">
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#ECFDF5] text-[#059669] text-xs font-bold uppercase tracking-wider border border-[#A7F3D0]">
@@ -205,11 +205,11 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({
             Estructura Epistemológica LabSIE · EduTLAN
           </span>
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#24302F]" style={{ color: '#24302F' }}>
-            Las Cuatro Líneas de Investigación
+            Las Cinco Líneas Oficiales de Investigación
           </h2>
           <p className="text-sm md:text-base text-[#526066] leading-relaxed">
             El Semillero LabSIE y el Grupo EduTLAN (Categoría A MinCiencias) desarrollan su labor científica
-            alrededor de <strong className="text-[#24302F]">cuatro líneas oficiales de investigación</strong> en la Licenciatura en Informática:
+            alrededor de <strong className="text-[#059669]">cinco líneas oficiales de investigación</strong> en la Licenciatura en Informática (incluyendo la línea de vanguardia en <em>Artificial Metacognition</em>):
           </p>
         </div>
 
@@ -530,6 +530,138 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({
               ))}
             </div>
           </div>
+
+          {/* Línea 5: Artificial Metacognition (Línea transversal de frontera en IA) */}
+          <div className="md:col-span-2 p-6 md:p-8 rounded-2xl bg-[#FFFDF9] border-2 border-[#10B981] shadow-md hover:border-[#059669] transition-all flex flex-col justify-between relative overflow-hidden">
+            <div className="absolute top-0 right-0 px-4 py-1.5 bg-[#ECFDF5] border-b-2 border-l-2 border-[#A7F3D0] rounded-bl-2xl text-[11px] font-bold text-[#065F46] uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />
+              <span>Línea de Frontera en IA & Agentes Autónomos</span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="px-3 py-1 rounded-md bg-[#059669] text-[#FFFDF9] text-xs font-bold uppercase tracking-wider">
+                  Línea 05
+                </span>
+                <span className="text-xs font-bold text-[#059669]">
+                  {projects.filter(p => p.lineId === 'line-artificial-metacognition').length} Proyectos Activos
+                </span>
+              </div>
+
+              <div>
+                <h3 className="font-serif font-bold text-xl md:text-2xl text-[#1C2624]">
+                  Artificial Metacognition
+                </h3>
+                <p className="text-xs md:text-sm text-[#24302F] leading-relaxed mt-2 font-normal">
+                  Artificial Metacognition es la línea de investigación centrada en <strong>sistemas de metacognición endógena en IA</strong>. Define la capacidad de los agentes artificiales de monitorear, evaluar y regular autónomamente su razonamiento mediante una interacción estructurada y auditable entre el <strong>Object Level</strong> (ejecución) y el <strong>Meta Level</strong> (monitoreo y control). Integra y unifica <em>CPCC, Meta-DNA, Dendritic Metacognition (DMA), MARINA-10, MetaLingua++, Cortico-Claustrum, Explainable Control e IM-Onto</em>.
+                </p>
+              </div>
+
+              {/* Pilares Unificados */}
+              <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#CCD4CF] text-xs space-y-2">
+                <span className="font-bold text-[#059669] uppercase tracking-wider text-[11px] block">
+                  Framework Unificado de Metacognición Endógena:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
+                  <div className="p-2 rounded-lg bg-[#FFFDF9] border border-[#CCD4CF]">
+                    <strong className="text-[#059669] block">Object vs Meta Level</strong>
+                    <span>Bucle auditable de ejecución, autovigilancia y control.</span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-[#FFFDF9] border border-[#CCD4CF]">
+                    <strong className="text-[#059669] block">CPCC & Cortico-Claustrum</strong>
+                    <span>Protocolo de comunicación cortical para control explicable.</span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-[#FFFDF9] border border-[#CCD4CF]">
+                    <strong className="text-[#059669] block">Meta-DNA & DMA</strong>
+                    <span>Metacognición dendrítica y autorregulación sináptica.</span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-[#FFFDF9] border border-[#CCD4CF]">
+                    <strong className="text-[#059669] block">MARINA-10 & IM-Onto</strong>
+                    <span>MetaLingua++ y ontología formal para auditoría de razonamiento.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Proyectos patrimoniales */}
+              <div className="pt-2 border-t border-[#CCD4CF] space-y-2.5 text-xs">
+                <span className="font-bold text-[#059669] block uppercase tracking-wider text-[11px]">Investigaciones Destacadas:</span>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  {/* LABSIE-P20 */}
+                  <div className="p-3.5 rounded-xl bg-[#F7F3ED] border-2 border-[#CCD4CF] hover:border-[#10B981] transition-colors space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded bg-[#10B981] text-[#FFFDF9] text-[10px] font-bold">LABSIE-P20</span>
+                      <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] text-[10px] font-bold border border-[#A7F3D0]">
+                        🧪 CARINA MIRROR Test
+                      </span>
+                    </div>
+                    <strong className="text-[#24302F] block text-xs md:text-sm">
+                      Benchmark conductual para la Metacognición Artificial en LLMs
+                    </strong>
+                    <p className="text-[11px] text-[#3F4E4C] leading-relaxed">
+                      Protocolos de perturbación para medir autoconocimiento, calibración y detección de alucinaciones en modelos fundacionales.
+                    </p>
+                  </div>
+
+                  {/* LABSIE-P26 */}
+                  <div className="p-3.5 rounded-xl bg-[#F7F3ED] border-2 border-[#CCD4CF] hover:border-[#10B981] transition-colors space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded bg-[#10B981] text-[#FFFDF9] text-[10px] font-bold">LABSIE-P26</span>
+                      <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] text-[10px] font-bold border border-[#A7F3D0]">
+                        🧠 Cortico-Claustrum & CPCC
+                      </span>
+                    </div>
+                    <strong className="text-[#24302F] block text-xs md:text-sm">
+                      Protocolo CPCC para control metacognitivo explicable en agentes IA
+                    </strong>
+                    <p className="text-[11px] text-[#3F4E4C] leading-relaxed">
+                      Arbitraje bioinspirado entre Object Level y Meta Level para justificación auditable de inferencias en aula.
+                    </p>
+                  </div>
+
+                  {/* LABSIE-P27 */}
+                  <div className="p-3.5 rounded-xl bg-[#F7F3ED] border-2 border-[#CCD4CF] hover:border-[#10B981] transition-colors space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded bg-[#10B981] text-[#FFFDF9] text-[10px] font-bold">LABSIE-P27</span>
+                      <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] text-[10px] font-bold border border-[#A7F3D0]">
+                        🧬 Meta-DNA & DMA
+                      </span>
+                    </div>
+                    <strong className="text-[#24302F] block text-xs md:text-sm">
+                      Dendritic Metacognition (DMA) y autorregulación sináptica en educación
+                    </strong>
+                    <p className="text-[11px] text-[#3F4E4C] leading-relaxed">
+                      Adaptación dinámica de heurísticas didácticas según el historial de razonamiento interno del tutor virtual.
+                    </p>
+                  </div>
+
+                  {/* LABSIE-P28 */}
+                  <div className="p-3.5 rounded-xl bg-[#F7F3ED] border-2 border-[#CCD4CF] hover:border-[#10B981] transition-colors space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded bg-[#10B981] text-[#FFFDF9] text-[10px] font-bold">LABSIE-P28</span>
+                      <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] text-[10px] font-bold border border-[#A7F3D0]">
+                        📜 MARINA-10 & IM-Onto
+                      </span>
+                    </div>
+                    <strong className="text-[#24302F] block text-xs md:text-sm">
+                      MetaLingua++ y ontología formal IM-Onto para auditoría de razonamiento
+                    </strong>
+                    <p className="text-[11px] text-[#3F4E4C] leading-relaxed">
+                      Sintaxis formal e introspección semántica para verificar trayectorias cognitivas en agentes educativos.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 mt-3 border-t border-[#CCD4CF] flex flex-wrap gap-1.5">
+              {['Object Level', 'Meta Level', 'CPCC', 'Meta-DNA', 'DMA', 'MARINA-10', 'MetaLingua++', 'Cortico-Claustrum', 'Explainable Control', 'IM-Onto', 'Metacognición Endógena'].map(k => (
+                <span key={k} className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#F7F3ED] text-[#059669] border border-[#CCD4CF]">
+                  {k}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Nota Institucional Aclaratoria sobre Líneas vs Modalidades */}
@@ -537,7 +669,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({
           <CheckCircle className="w-5 h-5 text-[#10B981] shrink-0 mt-0.5" />
           <div className="leading-relaxed">
             <strong className="text-[#059669] block mb-0.5">Clarificación Epistemológica:</strong>
-            LabSIE cuenta exclusivamente con estas <strong className="text-[#059669]">cuatro líneas de investigación oficiales</strong>. Las figuras siguientes (<em>Heredar, Conectar, Trascender y Explorar</em>) no son líneas de investigación; corresponden a las <strong className="text-[#059669]">modalidades de trayectoria</strong> mediante las cuales puedes vincular tu propio perfil a los proyectos del semillero.
+            LabSIE cuenta con estas <strong className="text-[#059669]">cinco líneas de investigación oficiales</strong> (incluyendo la línea de frontera en <em>Artificial Metacognition</em>). Las figuras siguientes (<em>Heredar, Conectar, Trascender y Explorar</em>) no son líneas de investigación; corresponden a las <strong className="text-[#059669]">modalidades de trayectoria</strong> mediante las cuales puedes vincular tu propio perfil a los proyectos del semillero.
           </div>
         </div>
       </div>

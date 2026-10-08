@@ -12,6 +12,7 @@ import { HeritageExplorer } from './components/HeritageExplorer';
 import { ResultsView } from './components/ResultsView';
 import { AdminDashboard } from './components/AdminDashboard';
 import { WelcomeModal } from './components/WelcomeModal';
+import { AdminAuthModal } from './components/AdminAuthModal';
 import { storageService, AppUser } from './services/storageService';
 import { ResearchProject, ResearchLine, AnalysisResult } from './types';
 
@@ -24,11 +25,10 @@ export default function App() {
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisResult | null>(null);
 
   // Semillero affiliation and popup modal state
-  // Requisito: La ventana emergente sale una vez se ingresa a la página
-  // Requisito: La ventana del test está bloqueada desde el inicio, solo cuando el usuario acepte hacer el test se activará
   const [isTestUnlocked, setIsTestUnlocked] = useState<boolean>(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState<boolean>(true);
   const [welcomeModalMode, setWelcomeModalMode] = useState<'welcome' | 'locked-attempt'>('welcome');
+  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState<boolean>(false);
 
   const loadData = () => {
     setProjects(storageService.getProjects());
@@ -85,9 +85,21 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Direct navigation without aggressive popups
+  // Direct navigation with role separation protection
   const handleNavigate = (view: 'welcome' | 'test' | 'heritage' | 'results' | 'admin') => {
+    if (view === 'admin') {
+      if (!storageService.isAdminAuthenticated()) {
+        setIsAdminAuthModalOpen(true);
+        return;
+      }
+    }
     setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAdminAuthSuccess = () => {
+    setIsAdminAuthModalOpen(false);
+    setCurrentView('admin');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -118,6 +130,7 @@ export default function App() {
           setWelcomeModalMode('welcome');
           setIsWelcomeModalOpen(true);
         }}
+        onOpenAdminAuthModal={() => setIsAdminAuthModalOpen(true)}
         onActivateRoute={handleActivateRoute}
         onDeactivateRoute={handleDeactivateRoute}
       />
@@ -179,6 +192,7 @@ export default function App() {
             projects={projects}
             lines={lines}
             onRefreshData={loadData}
+            onExitAdmin={() => handleNavigate('welcome')}
           />
         )}
       </main>
@@ -194,6 +208,13 @@ export default function App() {
         onExploreBeforeTest={handleExploreBeforeTest}
         mode={welcomeModalMode}
         totalProjectsCount={projects.length}
+      />
+
+      {/* Modal de Autenticación de Administrador con Clave Única */}
+      <AdminAuthModal
+        isOpen={isAdminAuthModalOpen}
+        onClose={() => setIsAdminAuthModalOpen(false)}
+        onSuccess={handleAdminAuthSuccess}
       />
     </div>
   );

@@ -6,7 +6,9 @@ import {
   RouteType,
   CorrespondenceLevel,
   RelatedProjectAffinity,
-  ProposedProject
+  ProposedProject,
+  ProposedProjectOption,
+  AnalysisPerspective
 } from '../types';
 
 export const ALGORITHM_VERSION = 'v2.0-lic-informatica-engine';
@@ -87,8 +89,9 @@ export function runRecommendationEngine(
       if (aiLow.includes('retroalimentación') && projAllTerms.some(t => t.includes('retroalimentación') || t.includes('tutor') || t.includes('recomendación'))) interestMatches += 2.0;
       if (aiLow.includes('adapta') && (project.lineId === 'line-entornos-virtuales-adaptativos' || projAllTerms.some(t => t.includes('adaptativ') || t.includes('asistente') || t.includes('tutor')))) interestMatches += 1.8;
       if (aiLow.includes('comportamiento') && projAllTerms.some(t => t.includes('comportamiento') || t.includes('disciplinario') || t.includes('autorregulado') || t.includes('inasistencia'))) interestMatches += 2.0;
-      if (aiLow.includes('evalúa') && projAllTerms.some(t => t.includes('evaluación') || t.includes('competencias') || t.includes('rendimiento'))) interestMatches += 2.2;
+      if (aiLow.includes('evalúa') && projAllTerms.some(t => t.includes('evaluación') || t.includes('competencias') || t.includes('rendimiento') || t.includes('metacognición') || t.includes('carina'))) interestMatches += 2.2;
       if (aiLow.includes('límites') && projAllTerms.some(t => t.includes('pensamiento crítico') || t.includes('dificultades') || t.includes('experiencias'))) interestMatches += 2.0;
+      if ((aiLow.includes('metacognici') || aiLow.includes('autorregula') || aiLow.includes('endógena') || aiLow.includes('object level') || aiLow.includes('meta level')) && (project.lineId === 'line-artificial-metacognition' || projAllTerms.some(t => t.includes('metacogn') || t.includes('carina') || t.includes('cpcc') || t.includes('claustrum') || t.includes('dma')))) interestMatches += 2.6;
     });
 
     const interestScore = Math.min(100, Math.round((interestMatches / Math.max(3, (curiosityQuestions.length + aiInterests.length) * 0.4)) * 100));
@@ -151,7 +154,8 @@ export function runRecommendationEngine(
       'conocimiento', 'aprendizaje', 'tutor', 'inteligencia artificial', 'ia', 'retroalimentación',
       'crítico', 'evaluación', 'modelo', 'datos', 'escuela', 'docente', 'estudiante', 'cultura',
       'coil', 'lenguaje', 'llm', 'chatgpt', 'gemelo', 'simulación', 'programación', 'algoritmo',
-      'código', 'error', 'dificultad', 'predecir', 'intervención', 'metacognición', 'rural', 'córdoba'
+      'código', 'error', 'dificultad', 'predecir', 'intervención', 'metacognición', 'rural', 'córdoba',
+      'artificial metacognition', 'object level', 'meta level', 'cpcc', 'meta-dna', 'dma', 'marina-10', 'metalingua', 'cortico-claustrum', 'explainable control', 'im-onto', 'introspección'
     ];
 
     let ideaMatches = 0;
@@ -372,6 +376,29 @@ export function runRecommendationEngine(
     profile
   );
 
+  // Generate the 3 distinct perspectives requested by the user
+  const perspectives = generateThreePerspectives(
+    answers,
+    projects,
+    lines,
+    routeType,
+    correspondenceScore,
+    projectAffinities,
+    primaryProject,
+    secondProject?.project,
+    proposedProject,
+    profile
+  );
+
+  // Formulate 3 distinct innovative project options based on the analysis
+  const proposedProjectOptions = generateThreeProjectOptions(
+    answers,
+    primaryProject,
+    secondProject?.project,
+    routeType,
+    profile
+  );
+
   return {
     id: `eval-${Date.now()}`,
     timestamp: new Date().toISOString(),
@@ -403,6 +430,10 @@ export function runRecommendationEngine(
       ]
     },
     proposedProject,
+    proposedProjectOptions,
+    selectedProjectOptionId: 'opcion-1',
+    perspectives,
+    selectedPerspectiveId: 'tecnologico',
     studentAnswers: answers
   };
 }
@@ -486,4 +517,344 @@ function generateTentativeProposal(
     ],
     statusLabel: 'PROPUESTA PRELIMINAR — SUJETA A VALIDACIÓN'
   };
+}
+
+function generateThreePerspectives(
+  answers: TestAnswers,
+  projects: ResearchProject[],
+  lines: ResearchLine[],
+  defaultRouteType: RouteType,
+  baseScore: number,
+  allAffinities: {
+    project: ResearchProject;
+    totalAffinity: number;
+    connectionReason: string;
+    matchingConcepts: string[];
+  }[],
+  primaryProject: ResearchProject,
+  secondProject: ResearchProject | undefined,
+  defaultProposal: ProposedProject,
+  profile: any
+): AnalysisPerspective[] {
+  const idea = answers.problemToInvestigate || answers.dreamResearch || answers.sixMonthsDiscovery || '';
+
+  // Helpers to score projects for a specific perspective
+  const techTerms = ['ia', 'tutor', 'inteligente', 'tracing', 'algoritmo', 'gemelo', 'markov', 'datos', 'carina', 'software', 'sistema', 'computacional', 'llm', 'modelo', 'predictiv', 'adaptativ'];
+  const pedTerms = ['didáctica', 'pensamiento computacional', 'secuencia', 'aula', 'aprendizaje', 'competencias', 'formación', 'evaluación', 'andamiaje', 'gamificación', 'docente', 'pedagógic', 'escolar'];
+  const socTerms = ['rural', 'brecha digital', 'ética', 'sesgos', 'inclusión', 'accesibilidad', 'intercultural', 'comunidad', 'coil', 'redes', 'apropiación', 'social', 'territorio', 'diversidad'];
+
+  const scoreForTerms = (p: ResearchProject, terms: string[]) => {
+    let s = 0;
+    const txt = (p.title + ' ' + p.concepts.join(' ') + ' ' + p.keywords.join(' ') + ' ' + (p.problem || '')).toLowerCase();
+    terms.forEach(t => {
+      if (txt.includes(t)) s += 2;
+    });
+    return s;
+  };
+
+  // 1. PERSPECTIVA TECNOLÓGICA Y PROTOTIPADO CON IA
+  const techSorted = [...allAffinities].sort((a, b) => {
+    const aTech = scoreForTerms(a.project, techTerms) * 2 + a.totalAffinity;
+    const bTech = scoreForTerms(b.project, techTerms) * 2 + b.totalAffinity;
+    return bTech - aTech;
+  });
+  const techProjects = techSorted.slice(0, 3).map(pa => ({
+    projectId: pa.project.id,
+    projectTitle: pa.project.title,
+    projectCode: pa.project.code,
+    affinity: Math.min(99, Math.round(pa.totalAffinity * 0.95 + 4)),
+    connectionReason: `Énfasis computacional: vinculación técnica con la arquitectura de ${pa.project.code} y desarrollo de módulos inteligentes interactivos.`,
+    matchingConcepts: pa.project.concepts.slice(0, 3)
+  }));
+  const techP1 = techSorted[0]?.project || primaryProject;
+  const techScore = Math.min(98, Math.max(50, Math.round(baseScore * 0.96 + (answers.aiInterests.length > 2 ? 6 : 2))));
+
+  const techPerspective: AnalysisPerspective = {
+    id: 'tecnologico',
+    title: 'Enfoque Tecnológico y Prototipado con IA',
+    badge: '💻 Sistemas Inteligentes & Software Educativo',
+    icon: '💻',
+    shortDescription: 'Orientado al desarrollo de software educativo, algoritmos de IA (LLMs, agentes pedagógicos), analítica de datos y prototipado interactivo.',
+    focusArea: 'Ingeniería de Software Educativo, Inteligencia Artificial y Analítica de Aprendizaje',
+    archetype: 'El Arquitecto de Sistemas Inteligentes y Prototipos Educativos',
+    routeType: defaultRouteType === 'EXPLORAR' ? 'HEREDAR' : defaultRouteType,
+    correspondenceScore: techScore,
+    correspondenceLevel: techScore >= 80 ? 'Alta correspondencia' : 'Buena correspondencia',
+    primaryLineId: techP1.lineId,
+    primaryLineName: techP1.lineName,
+    methodologyFocus: {
+      type: 'Design-Based Research (DBR) & Prototipado Ágil de Software',
+      icon: '⚡',
+      description: 'Metodología iterativa que combina el diseño de software educativo, ingeniería de prompts o modelos de IA, pruebas con usuarios en laboratorio y validación de interfaces interactivas.'
+    },
+    whyExplanation: [
+      `Desde la perspectiva del desarrollo técnico en la Licenciatura en Informática, tus respuestas muestran una vocación natural por la construcción de artefactos digitales, programación y aplicaciones inteligentes.`,
+      `Este punto de vista prioriza la creación o enriquecimiento de arquitecturas como ${techP1.title} (${techP1.code}), aprovechando librerías modernas, integración de APIs de Inteligencia Artificial y bases de datos relacionales en la nube.`,
+      `Te permite consolidar un perfil de egresado con competencias sólidas en ingeniería de software educativo, desarrollo web interactivo y analítica predictiva de datos escolares.`
+    ],
+    keyStrengths: [
+      'Habilidades e interés en código, algoritmos y diseño de sistemas',
+      'Curiosidad por el funcionamiento interno de modelos LLM y agentes pedagógicos',
+      'Capacidad para prototipar herramientas funcionales que resuelvan problemas de aula'
+    ],
+    relatedProjects: techProjects,
+    proposedProject: {
+      tentativeTitle: `Desarrollo e integración de un entorno interactivo con IA asistiva basado en ${techP1.code} para la Licenciatura en Informática`,
+      tentativeQuestion: `¿Cómo diseñar e implementar una arquitectura de software inteligente que optimice la retroalimentación automática y la experiencia interactiva de aprendizaje en cursos de informática?`,
+      tentativeObjective: `Desarrollar y evaluar un prototipo funcional de software educativo asistido por IA, integrando módulos de analítica y personalización en tiempo real para la Universidad de Córdoba.`,
+      centralConcepts: ['Software Educativo', 'Inteligencia Artificial', 'Arquitectura de Sistemas', 'Prototipado Interactivo'],
+      possibleContextPopulation: `Estudiantes de informática y programación de la Universidad de Córdoba`,
+      possibleContribution: `Aportar una herramienta digital funcional, código abierto o módulo de software que potencie las plataformas investigativas activas del LabSIE.`,
+      nextSteps: [
+        `Revisión de especificaciones técnicas y repositorios de código de ${techP1.code}.`,
+        `Definición de stack tecnológico (Frontend, API de IA, persistencia de datos).`,
+        `Construcción del diagrama de arquitectura y primer sprint de prototipado.`
+      ],
+      statusLabel: 'ENFOQUE TECNOLÓGICO · PROPUESTA PRELIMINAR'
+    }
+  };
+
+  // 2. PERSPECTIVA PEDAGÓGICA Y DIDÁCTICA DE LA INFORMÁTICA
+  const pedSorted = [...allAffinities].sort((a, b) => {
+    const aPed = scoreForTerms(a.project, pedTerms) * 2 + a.totalAffinity;
+    const bPed = scoreForTerms(b.project, pedTerms) * 2 + b.totalAffinity;
+    return bPed - aPed;
+  });
+  const pedProjects = pedSorted.slice(0, 3).map(pa => ({
+    projectId: pa.project.id,
+    projectTitle: pa.project.title,
+    projectCode: pa.project.code,
+    affinity: Math.min(99, Math.round(pa.totalAffinity * 0.94 + 3)),
+    connectionReason: `Énfasis didáctico: transposición curricular y mediación formativa de ${pa.project.code} en ambientes de aprendizaje escolar.`,
+    matchingConcepts: pa.project.concepts.slice(0, 3)
+  }));
+  const pedP1 = pedSorted[0]?.project || primaryProject;
+  const pedScore = Math.min(97, Math.max(50, Math.round(baseScore * 0.95 + (answers.preferredActivities.some(a => a.includes('diseñar') || a.includes('actividades')) ? 5 : 2))));
+
+  const pedPerspective: AnalysisPerspective = {
+    id: 'pedagogico',
+    title: 'Enfoque Pedagógico y Didáctica de la Informática',
+    badge: '🎓 Didáctica, Aula & Aprendizaje',
+    icon: '🎓',
+    shortDescription: 'Orientado a la mediación docente, desarrollo del pensamiento computacional en colegios, secuencias didácticas situadas y evaluación auténtica formativa.',
+    focusArea: 'Didáctica de las Ciencias de la Computación, Evaluación Formativa y Mediación Pedagógica',
+    archetype: 'El Diseñador Pedagógico e Investigador en Didáctica Escolar',
+    routeType: defaultRouteType === 'EXPLORAR' ? 'HEREDAR' : (defaultRouteType === 'TRASCENDER' ? 'CONECTAR' : defaultRouteType),
+    correspondenceScore: pedScore,
+    correspondenceLevel: pedScore >= 80 ? 'Alta correspondencia' : 'Buena correspondencia',
+    primaryLineId: pedP1.lineId,
+    primaryLineName: pedP1.lineName,
+    methodologyFocus: {
+      type: 'Investigación-Acción Pedagógica (IAPed) & Enfoques Mixtos Cuasi-experimentales',
+      icon: '📖',
+      description: 'Diagnóstico de necesidades en el aula de informática escolar, diseño de secuencias formativas guiadas, intervención situada con estudiantes y evaluación del progreso cognitivo.'
+    },
+    whyExplanation: [
+      `Desde la esencia formadora de la Licenciatura en Informática, este punto de vista privilegia cómo los estudiantes aprenden y cómo el futuro docente media el conocimiento tecnológico.`,
+      `El foco de tus resultados se concentra en el impacto pedagógico directo: cómo proyectos como ${pedP1.title} (${pedP1.code}) transforman la comprensión conceptual, la motivación y la autorregulación del escolar.`,
+      `Este enfoque es ideal para trabajos de grado orientados a la práctica docente, diseño curricular para la educación básica y media, y publicaciones en revistas de pedagogía de la computación.`
+    ],
+    keyStrengths: [
+      'Sensibilidad pedagógica hacia las dificultades de aprendizaje de los estudiantes',
+      'Habilidad para diseñar secuencias didácticas, rúbricas formativas y andamiajes metacognitivos',
+      'Articulación entre contenidos de informática y habilidades del siglo XXI (pensamiento crítico y resolución de problemas)'
+    ],
+    relatedProjects: pedProjects,
+    proposedProject: {
+      tentativeTitle: `Diseño y validación de una secuencia didáctica mediada por tecnologías educativas para el fortalecimiento del pensamiento computacional`,
+      tentativeQuestion: `¿De qué manera una propuesta didáctica estructurada a partir de los hallazgos de ${pedP1.code} favorece el desarrollo del pensamiento computacional y la comprensión algorítmica en estudiantes escolares de Córdoba?`,
+      tentativeObjective: `Diseñar, implementar y evaluar una secuencia didáctica situada, fundamentada en mediaciones digitales activas, que potencie las competencias informáticas en la educación básica o media.`,
+      centralConcepts: ['Pensamiento Computacional', 'Didáctica de la Informática', 'Secuencias de Aprendizaje', 'Evaluación Formativa'],
+      possibleContextPopulation: `Estudiantes y docentes de instituciones educativas de básica y media de Córdoba`,
+      possibleContribution: `Aportar guías docentes, unidades didácticas validadas empíricamente e instrumentos de evaluación pedagógica con rigor metodológico para el magisterio.`,
+      nextSteps: [
+        `Revisión del marco didáctico y resultados de aprendizaje del proyecto ${pedP1.code}.`,
+        `Diseño de las matrices de competencias y actividades de mediación en el aula.`,
+        `Validación de la secuencia con expertos docentes del área de didáctica de EduTLAN.`
+      ],
+      statusLabel: 'ENFOQUE PEDAGÓGICO · PROPUESTA PRELIMINAR'
+    }
+  };
+
+  // 3. PERSPECTIVA DE INNOVACIÓN, GESTIÓN Y APROPIACIÓN SOCIAL
+  const socSorted = [...allAffinities].sort((a, b) => {
+    const aSoc = scoreForTerms(a.project, socTerms) * 2 + a.totalAffinity;
+    const bSoc = scoreForTerms(b.project, socTerms) * 2 + b.totalAffinity;
+    return bSoc - aSoc;
+  });
+  const socProjects = socSorted.slice(0, 3).map(pa => ({
+    projectId: pa.project.id,
+    projectTitle: pa.project.title,
+    projectCode: pa.project.code,
+    affinity: Math.min(99, Math.round(pa.totalAffinity * 0.93 + 4)),
+    connectionReason: `Énfasis social y regional: apropiación comunitaria, superación de brechas digitales y consideraciones éticas derivadas de ${pa.project.code}.`,
+    matchingConcepts: pa.project.concepts.slice(0, 3)
+  }));
+  const socP1 = socSorted[0]?.project || primaryProject;
+  const socScore = Math.min(96, Math.max(48, Math.round(baseScore * 0.93 + (answers.scenarioCulturalChallenge ? 6 : 2))));
+
+  const socPerspective: AnalysisPerspective = {
+    id: 'social',
+    title: 'Enfoque de Innovación, Gestión y Apropiación Social',
+    badge: '🌐 Impacto Social & Ética Tecnológica',
+    icon: '🌐',
+    shortDescription: 'Orientado a la mitigación de la brecha digital en el Caribe colombiano, ética y uso crítico de la IA, inclusión en zonas rurales y redes de divulgación investigativa.',
+    focusArea: 'Apropiación Social de la Tecnología, Inclusión Digital Regional y Ética Computacional',
+    archetype: 'El Gestor de Innovación e Impacto Comunitario y Social',
+    routeType: defaultRouteType === 'HEREDAR' ? 'CONECTAR' : 'TRASCENDER',
+    correspondenceScore: socScore,
+    correspondenceLevel: socScore >= 80 ? 'Alta correspondencia' : 'Buena correspondencia',
+    primaryLineId: socP1.lineId,
+    primaryLineName: socP1.lineName,
+    methodologyFocus: {
+      type: 'Investigación Acción Participativa (IAP) & Estudio de Casos Territoriales',
+      icon: '🤝',
+      description: 'Trabajo colaborativo directo con comunidades educativas rurales, análisis contextualizado de barreras de acceso, diálogo de saberes y cocreación de soluciones tecnológicas sostenibles.'
+    },
+    whyExplanation: [
+      `Desde la responsabilidad social de la universidad pública, este punto de vista examina la informática como palanca de equidad, transformación regional y democratización del saber en Córdoba.`,
+      `Tus respuestas conectan con la necesidad de llevar la ciencia y la tecnología más allá del laboratorio universitario: atender contextos rurales, comunidades vulnerables y debatir la ética de las tecnologías emergentes.`,
+      `Este enfoque abre puertas para formulación de proyectos financiados por MinCiencias, redes internacionales de investigación (COIL) y proyectos de extensión universitaria con alto reconocimiento social.`
+    ],
+    keyStrengths: [
+      'Compromiso y sensibilidad con las realidades territoriales y socioeducativas de la región',
+      'Capacidad crítica para reflexionar sobre los dilemas éticos, privacidad y equidad en el uso de IA',
+      'Liderazgo para articular comunidades, instituciones educativas y semilleros de investigación'
+    ],
+    relatedProjects: socProjects,
+    proposedProject: {
+      tentativeTitle: `Estrategia de apropiación social de tecnologías educativas y pensamiento computacional en contextos educativos de la región Caribe`,
+      tentativeQuestion: `¿Qué modelo de apropiación social tecnológica y mediación comunitaria permite mitigar las brechas digitales y fomentar el uso crítico de la tecnología en instituciones de Córdoba?`,
+      tentativeObjective: `Formular y sistematizar una estrategia participativa de apropiación tecnológica que promueva el acceso equitativo, la ética digital y la integración comunitaria en la educación en informática.`,
+      centralConcepts: ['Apropiación Social', 'Brecha Digital', 'Ética de la Tecnología', 'Inclusión Educativa'],
+      possibleContextPopulation: `Comunidades escolares de zonas rurales y periurbanas del departamento de Córdoba`,
+      possibleContribution: `Generar un modelo replicable de apropiación tecnológica con indicadores de impacto social para el grupo EduTLAN y la política educativa regional.`,
+      nextSteps: [
+        `Cartografía social de necesidades tecnológicas en la institución educativa aliada.`,
+        `Articulación con los directivos docentes y líderes comunitarios del territorio.`,
+        `Talleres de codiseño participativo para la apropiación crítica de la informática.`
+      ],
+      statusLabel: 'ENFOQUE SOCIAL · PROPUESTA PRELIMINAR'
+    }
+  };
+
+  return [techPerspective, pedPerspective, socPerspective];
+}
+
+function generateThreeProjectOptions(
+  answers: TestAnswers,
+  p1: ResearchProject,
+  p2: ResearchProject | undefined,
+  routeType: RouteType,
+  profile: any
+): ProposedProjectOption[] {
+  const idea = answers.problemToInvestigate || answers.dreamResearch || answers.sixMonthsDiscovery || '';
+  const focusTopic = idea.trim().length > 10 ? idea.trim().replace(/[.,]/g, '') : (p1.concepts[0] || 'la informática educativa');
+
+  const isMetacognitive =
+    p1.lineId === 'line-artificial-metacognition' ||
+    (p2 && p2.lineId === 'line-artificial-metacognition') ||
+    idea.toLowerCase().includes('metacogn') ||
+    idea.toLowerCase().includes('autorregula') ||
+    idea.toLowerCase().includes('introspecci');
+
+  // Option 1: Tecnológica & IA / Artificial Metacognition
+  const opt1: ProposedProjectOption = {
+    id: 'opcion-1',
+    optionNumber: 1,
+    badge: isMetacognitive ? 'Opción 1 · Artificial Metacognition & IA' : 'Opción 1 · Innovación Tecnológica & IA',
+    icon: isMetacognitive ? '🧠' : '🤖',
+    category: isMetacognitive ? 'Artificial Metacognition' : 'Tecnológico & IA',
+    tentativeTitle: isMetacognitive
+      ? `Agente pedagógico con Metacognición Artificial endógena: Interacción auditable entre Object Level y Meta Level mediante protocolo CPCC para ${focusTopic}`
+      : `Diseño e implementación de un sistema tutor interactivo asistido por IA generativa para ${focusTopic}`,
+    tentativeQuestion: isMetacognitive
+      ? `¿Cómo garantiza una arquitectura bioinspirada Cortico-Claustrum y el protocolo CPCC un control metacognitivo explicable y auditable entre el Object Level y el Meta Level en agentes para ${focusTopic}?`
+      : `¿De qué manera una arquitectura de software con agentes inteligentes y retroalimentación adaptativa en tiempo real optimiza el aprendizaje de ${focusTopic} en estudiantes de la Universidad de Córdoba?`,
+    tentativeObjective: isMetacognitive
+      ? `Diseñar y evaluar un agente con metacognición endógena que monitoree, evalúe y autorregule su razonamiento didáctico integrando los pilares de Artificial Metacognition (CPCC, Meta-DNA y DMA) en ${focusTopic}.`
+      : `Desarrollar y evaluar un entorno de software asistido por Inteligencia Artificial y analítica de datos que potencie la autonomía y resolución de problemas en ${focusTopic}.`,
+    centralConcepts: isMetacognitive
+      ? ['Artificial Metacognition', 'Object Level vs Meta Level', 'Protocolo CPCC', 'Cortico-Claustrum', 'Explainable Control', 'Meta-DNA']
+      : ['Inteligencia Artificial Educativa', 'Arquitectura de Software', 'Tutoría Inteligente Adaptativa', 'Analítica de Aprendizaje'],
+    possibleContextPopulation: `Estudiantes de cursos de programación y tecnología de la Licenciatura en Informática (Universidad de Córdoba)`,
+    methodology: {
+      name: isMetacognitive
+        ? 'Arquitecturas Cognitivas Endógenas, Protocolo CPCC & Benchmarking CARINA MIRROR'
+        : 'Design-Based Research (DBR) & Prototipado Ágil de Software',
+      description: isMetacognitive
+        ? 'Modelado formal del flujo Object/Meta Level, simulación de control explicable claustro-cortical y pruebas conductuales con el benchmark CARINA MIRROR.'
+        : 'Metodología iterativa que articula requerimientos funcionales, arquitectura de componentes, pruebas de usabilidad y refinamiento algorítmico.'
+    },
+    whyThisOption: isMetacognitive
+      ? `Surge de tu interés en agentes autónomos capaces de monitorear y regular su propio razonamiento, vinculándote a la línea de vanguardia Artificial Metacognition de LabSIE.`
+      : `Surge de tu marcada afinidad por la programación, modelado computacional y la curiosidad expresada hacia sistemas inteligentes y asistentes de IA.`,
+    possibleContribution: isMetacognitive
+      ? `Aportar un framework auditable de metacognición artificial endógena (Object Level/Meta Level) validado con la ontología IM-Onto para la educación en informática.`
+      : `Proporcionar un prototipo funcional de software y framework de prompts/agentes de código abierto validado empíricamente en el semillero LabSIE.`,
+    nextSteps: isMetacognitive
+      ? [
+          `Revisión del benchmark CARINA MIRROR (LABSIE-P20) y especificación de protocolo CPCC.`,
+          `Implementación del bucle de introspección entre Object Level y Meta Level.`,
+          `Pruebas experimentales de calibración y detección de alucinaciones en el laboratorio de LabSIE.`
+        ]
+      : [
+          `Definición de requerimientos técnicos y stack de desarrollo (React, APIs de IA, bases de datos).`,
+          `Construcción del prototipo funcional y módulo de analítica.`,
+          `Pruebas de interacción y usabilidad en laboratorios con estudiantes de informática.`
+        ],
+    isHighlighted: true
+  };
+
+  // Option 2: Didáctico & Aula
+  const opt2: ProposedProjectOption = {
+    id: 'opcion-2',
+    optionNumber: 2,
+    badge: 'Opción 2 · Innovación Didáctica & Aula',
+    icon: '📖',
+    category: 'Didáctico & Aula',
+    tentativeTitle: `Secuencia didáctica mediada por pensamiento computacional para la transposición didáctica de ${focusTopic}`,
+    tentativeQuestion: `¿Cómo influye una propuesta de intervención didáctica estructurada y gamificada en el desarrollo de habilidades de pensamiento computacional asociadas a ${focusTopic} en colegios de Córdoba?`,
+    tentativeObjective: `Diseñar, implementar y evaluar una secuencia didáctica situada que favorezca la comprensión conceptual, la metacognición y la resolución colaborativa de problemas en el aula escolar.`,
+    centralConcepts: ['Pensamiento Computacional', 'Didáctica de la Informática', 'Secuencia de Aprendizaje', 'Evaluación Auténtica'],
+    possibleContextPopulation: `Estudiantes y docentes de instituciones educativas de básica y media de Córdoba`,
+    methodology: {
+      name: 'Investigación-Acción Pedagógica (IAPed) & Métodos Mixtos',
+      description: 'Fases de diagnóstico curricular en el aula, planeación de unidades didácticas, intervención pedagógica y medición cuasi-experimental del logro de competencias.'
+    },
+    whyThisOption: `Surge de tu interés en la práctica docente, la mediación en el aula y cómo los estudiantes superan obstáculos conceptuales reales.`,
+    possibleContribution: `Aportar unidades didácticas con rigor pedagógico, rúbricas formativas e instrumentos validados para el magisterio de informática.`,
+    nextSteps: [
+      `Revisión del currículo escolar y mapeo de dificultades de aprendizaje en la institución aliada.`,
+      `Diseño de actividades de mediación (desenchufadas y conectadas) con rúbricas formativas.`,
+      `Validación de la secuencia con el equipo de didáctica del Grupo EduTLAN.`
+    ]
+  };
+
+  // Option 3: Social & Comunitario
+  const opt3: ProposedProjectOption = {
+    id: 'opcion-3',
+    optionNumber: 3,
+    badge: 'Opción 3 · Apropiación Social & Impacto Regional',
+    icon: '🌐',
+    category: 'Social & Comunitario',
+    tentativeTitle: `Estrategia de apropiación social tecnológica y mitigación de brechas digitales en contextos educativos rurales de Córdoba`,
+    tentativeQuestion: `¿Qué modelo pedagógico y comunitario permite integrar tecnologías educativas abiertas y pensamiento computacional en instituciones con baja conectividad en el departamento de Córdoba?`,
+    tentativeObjective: `Diseñar y validar un modelo participativo de apropiación social de la informática que promueva la inclusión digital, el uso crítico y la pertinencia territorial en comunidades rurales.`,
+    centralConcepts: ['Apropiación Social del Conocimiento', 'Brecha Digital Rural', 'Tecnologías Educativas Abiertas', 'Ética e Inclusión'],
+    possibleContextPopulation: `Comunidades educativas rurales y periurbanas del departamento de Córdoba`,
+    methodology: {
+      name: 'Investigación Acción Participativa (IAP) & Estudio de Casos Territoriales',
+      description: 'Inmersión dialógica con la comunidad escolar, codiseño de soluciones contextualizadas y evaluación del impacto socioeducativo y comunitario.'
+    },
+    whyThisOption: `Surge de tu sensibilidad hacia las necesidades del entorno territorial, la equidad educativa y el compromiso social de la Universidad de Córdoba.`,
+    possibleContribution: `Generar una guía metodológica y modelo replicable de extensión e investigación formativa para MinCiencias y la política educativa del Caribe.`,
+    nextSteps: [
+      `Diagnóstico participativo de infraestructura y necesidades en comunidad educativa rural.`,
+      `Codiseño de talleres y recursos tecnológicos offline (Micro:bit, software libre).`,
+      `Sistematización de la experiencia y formulación del informe de impacto territorial.`
+    ]
+  };
+
+  return [opt1, opt2, opt3];
 }

@@ -136,6 +136,51 @@ export interface ProposedProject {
   statusLabel: string; // e.g. "PROPUESTA PRELIMINAR — SUJETA A VALIDACIÓN"
 }
 
+export interface ProposedProjectOption {
+  id: string; // 'opcion-1' | 'opcion-2' | 'opcion-3'
+  optionNumber: number; // 1, 2, 3
+  badge: string; // e.g. "Opción 1 · Prototipo con Inteligencia Artificial"
+  icon: string; // e.g. "🤖", "📖", "🌐"
+  category: 'Tecnológico & IA' | 'Didáctico & Aula' | 'Social & Comunitario' | 'Artificial Metacognition';
+  tentativeTitle: string;
+  tentativeQuestion: string;
+  tentativeObjective: string;
+  centralConcepts: string[];
+  possibleContextPopulation: string;
+  methodology: {
+    name: string;
+    description: string;
+  };
+  whyThisOption: string;
+  possibleContribution: string;
+  nextSteps: string[];
+  isHighlighted?: boolean;
+}
+
+export interface AnalysisPerspective {
+  id: 'tecnologico' | 'pedagogico' | 'social';
+  title: string;
+  badge: string;
+  icon: string;
+  shortDescription: string;
+  focusArea: string;
+  archetype: string;
+  routeType: RouteType;
+  correspondenceScore: number;
+  correspondenceLevel: CorrespondenceLevel;
+  primaryLineId: string;
+  primaryLineName: string;
+  methodologyFocus: {
+    type: string;
+    icon: string;
+    description: string;
+  };
+  whyExplanation: string[];
+  keyStrengths: string[];
+  relatedProjects: RelatedProjectAffinity[];
+  proposedProject: ProposedProject;
+}
+
 export interface AnalysisResult {
   id: string;
   timestamp: string;
@@ -161,6 +206,10 @@ export interface AnalysisResult {
     detectedConnections: string[];
   };
   proposedProject: ProposedProject;
+  proposedProjectOptions?: ProposedProjectOption[];
+  selectedProjectOptionId?: string;
+  perspectives?: AnalysisPerspective[];
+  selectedPerspectiveId?: 'tecnologico' | 'pedagogico' | 'social';
   studentAnswers: TestAnswers;
   adminReview?: AdminReview;
 }
