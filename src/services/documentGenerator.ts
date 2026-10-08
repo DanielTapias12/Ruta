@@ -46,7 +46,7 @@ export async function generatePDFReport(
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(111, 121, 118); // #6F7976
-    doc.text('LABSIE · RUTA INVESTIGATIVA | GRUPO EDUTLAN · UNIVERSIDAD DE CÓRDOBA', margin, y);
+    doc.text('SEMILLERO DE INVESTIGACIÓN LABSIE · GRUPO EDUTLAN | UNIVERSIDAD DE CÓRDOBA', margin, y);
     doc.text(`ID: ${analysis.id}`, pageWidth - margin, y, { align: 'right' });
     y += 4;
     doc.setDrawColor(221, 226, 222);
@@ -82,22 +82,24 @@ export async function generatePDFReport(
   // Student Info Box
   doc.setFillColor(255, 253, 249); // #FFFDF9
   doc.setDrawColor(221, 226, 222);
-  doc.rect(margin, y, contentWidth, 32, 'FD');
+  doc.rect(margin, y, contentWidth, 42, 'FD');
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(36, 48, 47);
-  doc.text('DATOS DEL ESTUDIANTE:', margin + 5, y + 7);
+  doc.text('DATOS DEL ESTUDIANTE · SEMILLERO LABSIE:', margin + 5, y + 7);
 
   doc.setFont('helvetica', 'normal');
   doc.text(`Nombre: ${analysis.studentProfile.name}`, margin + 5, y + 14);
   doc.text(`Programa: ${analysis.studentProfile.program}`, margin + 5, y + 20);
   doc.text(`Semestre: ${analysis.studentProfile.semester}`, margin + 5, y + 26);
+  doc.text(`Vinculación: Semillero de Inv. LabSIE (Ruta Activada)`, margin + 5, y + 32);
 
-  doc.text(`Correo: ${analysis.studentProfile.email}`, margin + 90, y + 14);
-  doc.text(`Fecha de emisión: ${new Date(analysis.timestamp).toLocaleDateString('es-CO')}`, margin + 90, y + 20);
-  doc.text(`Algoritmo: ${analysis.algorithmVersion}`, margin + 90, y + 26);
-  y += 38;
+  doc.text(`Correo: ${analysis.studentProfile.email}`, margin + 95, y + 14);
+  doc.text(`Teléfono: ${analysis.studentProfile.phone || 'No registrado'}`, margin + 95, y + 20);
+  doc.text(`Grupo: EduTLAN (Categoría A MinCiencias)`, margin + 95, y + 26);
+  doc.text(`Fecha de emisión: ${new Date(analysis.timestamp).toLocaleDateString('es-CO')}`, margin + 95, y + 32);
+  y += 48;
 
   // Helper for Section Titles
   const addSectionTitle = (num: string, title: string) => {
@@ -311,10 +313,10 @@ export async function generateDOCXReport(
       spacing: { before: 300, after: 100 },
       children: [
         new TextRun({
-          text: 'LABSIE · RUTA INVESTIGATIVA',
+          text: 'SEMILLERO DE INVESTIGACIÓN LABSIE · GRUPO EDUTLAN',
           bold: true,
           font: 'Lora',
-          size: 38,
+          size: 34,
           color: '477A72'
         })
       ]
@@ -391,6 +393,18 @@ export async function generateDOCXReport(
           }),
           new TableCell({
             children: [createP(`Semestre: ${analysis.studentProfile.semester}`)],
+            width: { size: 50, type: WidthType.PERCENTAGE }
+          })
+        ]
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [createP(`Teléfono: ${analysis.studentProfile.phone || 'No registrado'}`)],
+            width: { size: 50, type: WidthType.PERCENTAGE }
+          }),
+          new TableCell({
+            children: [createP(`Vinculación: Semillero LabSIE (Ruta Activada)`)],
             width: { size: 50, type: WidthType.PERCENTAGE }
           })
         ]

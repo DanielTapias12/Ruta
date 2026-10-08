@@ -15,7 +15,8 @@ import {
   CheckCircle2,
   Bookmark,
   Compass,
-  Filter
+  Filter,
+  Lock
 } from 'lucide-react';
 import {
   StudentProfileData,
@@ -36,6 +37,10 @@ interface TestViewProps {
   lines: ResearchLine[];
   onTestComplete: (result: AnalysisResult) => void;
   onCancel: () => void;
+  isTestUnlocked?: boolean;
+  onActivateRoute?: () => void;
+  onOpenWelcomeModal?: () => void;
+  onExploreHeritage?: () => void;
 }
 
 const TOTAL_SECTIONS = 7;
@@ -44,7 +49,11 @@ export const TestView: React.FC<TestViewProps> = ({
   projects,
   lines,
   onTestComplete,
-  onCancel
+  onCancel,
+  isTestUnlocked = true,
+  onActivateRoute,
+  onOpenWelcomeModal,
+  onExploreHeritage
 }) => {
   const [currentSection, setCurrentSection] = useState<number>(1);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
@@ -55,8 +64,10 @@ export const TestView: React.FC<TestViewProps> = ({
   // ZERO PRE-SELECTION: All user answers start strictly EMPTY / UNSELECTED
   // =========================================================================
 
-  // SECCIÓN 1 — 👤 CONÓCETE (Preguntas 1 a 6)
+  // SECCIÓN 1 — 👤 DATOS PERSONALES Y ACADÉMICOS (Preguntas 1 a 8)
   const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const [program, setProgram] = useState<string>('Licenciatura en Informática'); // Exclusivo Licenciatura en Informática
   const [semester, setSemester] = useState<string>(''); // No preselected semester
   const [researchExperience, setResearchExperience] = useState<string>(''); // No preselected experience
@@ -234,27 +245,35 @@ export const TestView: React.FC<TestViewProps> = ({
     // Validation Section 1
     if (currentSection === 1) {
       if (!name.trim()) {
-        setErrorMsg('Por favor escribe tu nombre completo.');
+        setErrorMsg('Por favor escribe tu nombre completo (Pregunta 1).');
+        return;
+      }
+      if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        setErrorMsg('Por favor escribe un correo electrónico institucional válido (Pregunta 2, ej: tu.usuario@correo.unicordoba.edu.co).');
+        return;
+      }
+      if (!phone.trim() || phone.trim().replace(/\D/g, '').length < 7) {
+        setErrorMsg('Por favor escribe un número de teléfono / WhatsApp válido (Pregunta 3, mínimo 7 dígitos).');
         return;
       }
       if (!program) {
-        setErrorMsg('Por favor selecciona tu programa académico.');
+        setErrorMsg('Por favor selecciona tu programa académico (Pregunta 4).');
         return;
       }
       if (!semester) {
-        setErrorMsg('Por favor selecciona tu semestre actual.');
+        setErrorMsg('Por favor selecciona tu semestre actual (Pregunta 5).');
         return;
       }
       if (!researchExperience) {
-        setErrorMsg('Por favor responde si has participado en investigación (Pregunta 4).');
+        setErrorMsg('Por favor responde si has participado en investigación (Pregunta 6).');
         return;
       }
       if (!techExperience) {
-        setErrorMsg('Por favor selecciona tu nivel de trabajo con tecnología (Pregunta 5).');
+        setErrorMsg('Por favor selecciona tu nivel de trabajo con tecnología (Pregunta 7).');
         return;
       }
       if (!aiExperience) {
-        setErrorMsg('Por favor indica qué tanto has utilizado herramientas de IA (Pregunta 6).');
+        setErrorMsg('Por favor indica qué tanto has utilizado herramientas de IA (Pregunta 8).');
         return;
       }
     }
@@ -347,15 +366,18 @@ export const TestView: React.FC<TestViewProps> = ({
 
     const profileData: StudentProfileData = {
       name: name.trim(),
-      email: `${name.trim().toLowerCase().replace(/\s+/g, '.')}@correo.unicordoba.edu.co`,
+      email: email.trim() || `${name.trim().toLowerCase().replace(/\s+/g, '.')}@correo.unicordoba.edu.co`,
+      phone: phone.trim(),
       program: (program || 'Licenciatura en Informática') as any,
       semester: semester || '1.º',
+      wantsToJoinLabSIE: '¡Sí, quiero ser parte del Semillero LabSIE!',
       researchExperience: researchExperience || 'No, es mi primer acercamiento.',
       techExperience: techExperience || 'Intermedio',
       aiExperience: aiExperience || 'Ocasionalmente'
     };
 
     const answers: TestAnswers = {
+      wantsToJoinLabSIE: '¡Sí, quiero ser parte del Semillero LabSIE!',
       profile: profileData,
       firstActionOnProblem,
       curiosityQuestions,
@@ -411,6 +433,84 @@ export const TestView: React.FC<TestViewProps> = ({
     onTestComplete(finalResult);
   };
 
+  // Safe gate: El test solo se activará si el usuario busca ingresar al semillero, mientras decida que no, no dejes que pueda realizar el test
+  if (!isTestUnlocked) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 md:px-8 py-10 md:py-16">
+        <div className="bg-[#FFFDF9] border-2 border-[#CCD4CF] rounded-3xl p-6 md:p-10 shadow-lg text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-[#FEF3C7] border-2 border-[#FCD34D] text-[#B45309] flex items-center justify-center mx-auto shadow-sm">
+            <Lock className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-2 max-w-xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />
+              <span>Semillero de Investigación LabSIE · Grupo EduTLAN</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1C2624]">
+              Acceso al Test de Exploración Investigativa
+            </h2>
+            <p className="text-sm text-[#526066] leading-relaxed">
+              El test de caracterización investigativa está reservado exclusivamente para los estudiantes que desean ingresar al <strong>Semillero de Investigación LabSIE</strong> del <strong>Grupo EduTLAN</strong>. Mientras decidas que no, puedes explorar las investigaciones o consultar la información institucional.
+            </p>
+          </div>
+
+          {/* Opciones de activación y vinculación */}
+          <div className="p-5 rounded-2xl bg-[#FAF8F5] border-2 border-[#CCD4CF] max-w-lg mx-auto space-y-3">
+            <span className="text-xs uppercase font-bold tracking-wider text-[#059669] block">
+              Convocatoria Oficial · Semillero LabSIE
+            </span>
+
+            <div className="flex flex-col gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  if (onActivateRoute) onActivateRoute();
+                }}
+                className="cursor-pointer w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-[#10B981] text-[#FFFDF9] font-bold text-sm sm:text-base hover:bg-[#059669] transition-all shadow-md hover:shadow-lg border-2 border-[#10B981]"
+              >
+                <CheckCircle2 className="w-5 h-5 shrink-0" />
+                <span>¡Sí, quiero ingresar! Activar mi Ruta y Test</span>
+              </button>
+
+              {onOpenWelcomeModal && (
+                <button
+                  type="button"
+                  onClick={onOpenWelcomeModal}
+                  className="cursor-pointer w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-[#CCD4CF] bg-[#FFFDF9] text-[#1C2624] font-bold text-xs sm:text-sm hover:bg-[#F2EDE5] hover:border-[#059669] transition-all shadow-xs"
+                >
+                  <Layers className="w-4 h-4 text-[#059669] shrink-0" />
+                  <span>Ver de nuevo la ventana emergente de invitación</span>
+                </button>
+              )}
+
+              {onExploreHeritage && (
+                <button
+                  type="button"
+                  onClick={onExploreHeritage}
+                  className="cursor-pointer w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-transparent text-[#526066] font-semibold text-xs hover:text-[#1C2624] transition-all"
+                >
+                  <Compass className="w-4 h-4 shrink-0" />
+                  <span>Explorar los 25 proyectos de investigación primero</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="cursor-pointer text-xs font-semibold text-[#526066] hover:text-[#1C2624] underline underline-offset-2"
+            >
+              ← Volver a la pantalla de inicio
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 py-8 md:py-12">
       {/* =================================================================== */}
@@ -420,14 +520,19 @@ export const TestView: React.FC<TestViewProps> = ({
         <div className="flex items-center gap-4">
           <LabSIELogo size="md" className="hover:opacity-95 transition-opacity shrink-0" />
           <div className="hidden sm:block h-10 w-px bg-[#CCD4CF]" />
-          <EduTLANLogo size="sm" showCategoryBadge={true} className="hidden sm:inline-flex shrink-0" />
+          <EduTLANLogo size="sm" showCategoryBadge={true} className="shrink-0" />
         </div>
         <div className="text-center md:text-right">
-          <span className="inline-block px-3 py-1 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-xs font-bold uppercase tracking-wider">
-            Licenciatura en Informática
-          </span>
-          <p className="text-xs text-[#1C2624] mt-1 font-bold">
-            Test de Exploración e Intereses Investigativos
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-1.5 mb-1.5">
+            <span className="inline-block px-3 py-1 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-xs font-bold uppercase tracking-wider">
+              Semillero de Investigación LabSIE
+            </span>
+            <span className="inline-block px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-xs font-bold uppercase tracking-wider">
+              Grupo EduTLAN
+            </span>
+          </div>
+          <p className="text-xs text-[#1C2624] font-bold">
+            Convocatoria & Promoción Investigativa · Licenciatura en Informática
           </p>
         </div>
       </div>
@@ -450,7 +555,7 @@ export const TestView: React.FC<TestViewProps> = ({
 
       {/* Error alert if any */}
       {errorMsg && (
-        <div className="mb-6 p-4 rounded-xl bg-[#B65C5C]/10 border border-[#B65C5C]/40 text-xs md:text-sm text-[#B65C5C] font-medium flex items-center gap-2.5">
+        <div className="mb-6 p-4 rounded-xl bg-[#B65C5C]/10 border-2 border-[#B65C5C]/50 text-xs md:text-sm text-[#B65C5C] font-bold flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0 text-[#B65C5C]" />
           <span>{errorMsg}</span>
         </div>
@@ -460,19 +565,25 @@ export const TestView: React.FC<TestViewProps> = ({
       <div className="bg-[#FFFDF9] border-2 border-[#CCD4CF] rounded-2xl p-6 md:p-10 shadow-sm min-h-[480px] flex flex-col justify-between relative overflow-hidden">
         <div>
           {/* ============================================================== */}
-          {/* SECCIÓN 1 — 👤 CONÓCETE */}
+          {/* SECCIÓN 1 — 👤 CARACTERIZACIÓN DEL ESTUDIANTE */}
           {/* ============================================================== */}
           {currentSection === 1 && (
             <div className="space-y-7">
-              <div className="border-b border-[#DDE2DE] pb-4">
-                <span className="text-xs uppercase tracking-wider text-[#059669] font-bold">
-                  SECCIÓN 1
-                </span>
-                <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#24302F] mt-1" style={{ color: '#24302F' }}>
-                  👤 Conócete
+              <div className="border-b-2 border-[#CCD4CF] pb-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs uppercase tracking-wider text-[#059669] font-bold">
+                    SECCIÓN 1 · CARACTERIZACIÓN DEL ESTUDIANTE
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-xs font-bold flex items-center gap-1 shadow-xs">
+                    <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />
+                    <span>Ruta LabSIE Activada</span>
+                  </span>
+                </div>
+                <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1C2624] mt-1" style={{ color: '#1C2624' }}>
+                  👤 Datos Personales y Académicos
                 </h2>
                 <p className="text-xs md:text-sm text-[#1C2624] mt-1.5 leading-relaxed font-normal">
-                  Ingresa tus datos académicos para situar tu punto de partida en la Licenciatura en Informática.
+                  Diligencia tus datos oficiales para vincular tu caracterización al <strong>Semillero de Investigación LabSIE</strong> (<strong>Grupo EduTLAN</strong>) y personalizar tu ruta de orientación investigativa en la <strong>Licenciatura en Informática</strong>.
                 </p>
               </div>
 
@@ -480,7 +591,7 @@ export const TestView: React.FC<TestViewProps> = ({
                 {/* 1. Nombre completo */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                    <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
                       Pregunta 1
                     </span>
                     <label htmlFor="q1-name" className="text-sm font-bold text-[#1C2624] font-serif" style={{ color: '#1C2624' }}>
@@ -498,19 +609,70 @@ export const TestView: React.FC<TestViewProps> = ({
                   />
                 </div>
 
+                {/* 2. Correo institucional y 3. Número de teléfono */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* 2. Programa académico */}
+                  {/* 2. Correo institucional */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                      <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
                         Pregunta 2
                       </span>
-                      <label htmlFor="q2-program" className="text-sm font-bold text-[#24302F] font-serif" style={{ color: '#24302F' }}>
+                      <label htmlFor="q2-email" className="text-sm font-bold text-[#1C2624] font-serif" style={{ color: '#1C2624' }}>
+                        Correo electrónico institucional <span className="text-[#B65C5C]">*</span>
+                      </label>
+                    </div>
+                    <input
+                      id="q2-email"
+                      type="email"
+                      required
+                      placeholder="usuario@correo.unicordoba.edu.co"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 text-sm bg-[#FAF8F5] border-2 border-[#CCD4CF] rounded-xl text-[#1C2624] font-medium placeholder-[#526066] focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] shadow-inner"
+                    />
+                    <p className="text-[11px] text-[#526066]">
+                      Vincula tu informe oficial al dominio institucional de la Universidad de Córdoba.
+                    </p>
+                  </div>
+
+                  {/* 3. Número de teléfono / WhatsApp */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                        Pregunta 3
+                      </span>
+                      <label htmlFor="q3-phone" className="text-sm font-bold text-[#1C2624] font-serif" style={{ color: '#1C2624' }}>
+                        Número de teléfono / WhatsApp <span className="text-[#B65C5C]">*</span>
+                      </label>
+                    </div>
+                    <input
+                      id="q3-phone"
+                      type="tel"
+                      required
+                      placeholder="Ej: 300 123 4567"
+                      value={phone}
+                      onChange={e => setPhone(e.target.value)}
+                      className="w-full px-4 py-3 text-sm bg-[#FAF8F5] border-2 border-[#CCD4CF] rounded-xl text-[#1C2624] font-medium placeholder-[#526066] focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] shadow-inner"
+                    />
+                    <p className="text-[11px] text-[#526066]">
+                      Contacto para convocatorias, tutorías y novedades del Semillero LabSIE.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* 4. Programa académico */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                        Pregunta 4
+                      </span>
+                      <label htmlFor="q4-program" className="text-sm font-bold text-[#24302F] font-serif" style={{ color: '#24302F' }}>
                         Programa académico <span className="text-[#059669] text-xs font-sans font-normal">(Exclusivo)</span>
                       </label>
                     </div>
                     <select
-                      id="q2-program"
+                      id="q4-program"
                       value={program}
                       onChange={e => setProgram(e.target.value)}
                       className="w-full px-4 py-3 text-sm bg-[#FFFDF9] border-2 border-[#10B981]/50 rounded-xl text-[#24302F] font-medium focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981]"
@@ -523,18 +685,18 @@ export const TestView: React.FC<TestViewProps> = ({
                     </p>
                   </div>
 
-                  {/* 3. Semestre */}
+                  {/* 5. Semestre */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
-                        Pregunta 3
+                      <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                        Pregunta 5
                       </span>
-                      <label htmlFor="q3-semester" className="text-sm font-bold text-[#24302F] font-serif" style={{ color: '#24302F' }}>
+                      <label htmlFor="q5-semester" className="text-sm font-bold text-[#24302F] font-serif" style={{ color: '#24302F' }}>
                         Semestre <span className="text-[#B65C5C]">*</span>
                       </label>
                     </div>
                     <select
-                      id="q3-semester"
+                      id="q5-semester"
                       value={semester}
                       onChange={e => setSemester(e.target.value)}
                       className="w-full px-4 py-3 text-sm bg-[#F7F3ED] border border-[#DDE2DE] rounded-xl text-[#24302F] focus:outline-none focus:border-[#10B981]"
@@ -549,11 +711,11 @@ export const TestView: React.FC<TestViewProps> = ({
                   </div>
                 </div>
 
-                {/* 4. ¿Has participado anteriormente en procesos de investigación? */}
+                {/* 6. ¿Has participado anteriormente en procesos de investigación? */}
                 <div className="space-y-3 pt-3 border-t border-[#DDE2DE]">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
-                      Pregunta 4
+                    <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                      Pregunta 6
                     </span>
                     <label className="text-sm font-bold text-[#24302F] font-serif block" style={{ color: '#24302F' }}>
                       ¿Has participado anteriormente en procesos de investigación? <span className="text-[#B65C5C]">*</span>
@@ -589,11 +751,11 @@ export const TestView: React.FC<TestViewProps> = ({
                   </div>
                 </div>
 
-                {/* 5. ¿Qué tanto has trabajado con tecnología? */}
+                {/* 7. ¿Qué tanto has trabajado con tecnología? */}
                 <div className="space-y-3 pt-3 border-t border-[#DDE2DE]">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
-                      Pregunta 5
+                    <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                      Pregunta 7
                     </span>
                     <label className="text-sm font-bold text-[#24302F] font-serif block" style={{ color: '#24302F' }}>
                       ¿Qué tanto has trabajado con tecnología? <span className="text-[#B65C5C]">*</span>
@@ -617,11 +779,11 @@ export const TestView: React.FC<TestViewProps> = ({
                   </div>
                 </div>
 
-                {/* 6. ¿Qué tanto has utilizado herramientas de Inteligencia Artificial? */}
+                {/* 8. ¿Qué tanto has utilizado herramientas de Inteligencia Artificial? */}
                 <div className="space-y-3 pt-3 border-t border-[#DDE2DE]">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
-                      Pregunta 6
+                    <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[11px] font-bold">
+                      Pregunta 8
                     </span>
                     <label className="text-sm font-bold text-[#24302F] font-serif block" style={{ color: '#24302F' }}>
                       ¿Qué tanto has utilizado herramientas de Inteligencia Artificial? <span className="text-[#B65C5C]">*</span>

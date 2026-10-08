@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface LabSIELogoProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   showSubtitle?: boolean;
 }
 
@@ -26,7 +26,8 @@ export const LabSIELogo: React.FC<LabSIELogoProps> = ({
     sm: 44, // Header sticky bar
     md: 68, // Tarjetas o paneles
     lg: 110, // Pantalla de bienvenida / Hero
-    xl: 140  // Ampliado
+    xl: 140, // Ampliado
+    '2xl': 170 // Máximo impacto
   }[size];
 
   // Proporción oficial: 320 x 200 (1.6:1)

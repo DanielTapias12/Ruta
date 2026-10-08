@@ -2,7 +2,7 @@ import React from 'react';
 
 interface EduTLANLogoProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   showCategoryBadge?: boolean;
 }
 
@@ -12,8 +12,14 @@ export const EduTLANLogo: React.FC<EduTLANLogoProps> = ({
   showCategoryBadge = true
 }) => {
   // Height configurations
-  const height = size === 'sm' ? 44 : size === 'lg' ? 84 : 60;
-  const width = Math.round(height * 1.6);
+  const height = {
+    sm: 44,
+    md: 68,
+    lg: 96,
+    xl: 125,
+    '2xl': 155
+  }[size];
+  const width = Math.round(height * 2.05);
 
   return (
     <div className={`inline-flex items-center gap-2 select-none ${className}`}>

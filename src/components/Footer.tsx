@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
           <LabSIELogo size="sm" />
           <div className="border-l-2 border-[#CCD4CF] pl-3 space-y-0.5">
             <p className="font-serif text-sm font-bold text-[#24302F]">
-              LABSIE · RUTA INVESTIGATIVA
+              Semillero de Investigación LabSIE · Grupo EduTLAN
             </p>
             <p className="text-[#3F4E4C] font-medium">
               Laboratorio de Sistemas Inteligentes en Educación · Grupo EduTLAN (Cat. A MinCiencias)

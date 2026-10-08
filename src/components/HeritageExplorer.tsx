@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronDown, ChevronUp, BookOpen, Layers, CheckCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, BookOpen, Layers, CheckCircle, ExternalLink, Sparkles, Lock } from 'lucide-react';
 import { ResearchProject, ResearchLine } from '../types';
 import { getProjectMethodology } from '../data/projectMetadata';
 
@@ -10,6 +10,7 @@ interface HeritageExplorerProps {
   selectableMode?: boolean;
   selectedProjectIds?: string[];
   onToggleProjectSelection?: (projectId: string) => void;
+  isTestUnlocked?: boolean;
 }
 
 export const HeritageExplorer: React.FC<HeritageExplorerProps> = ({
@@ -18,7 +19,8 @@ export const HeritageExplorer: React.FC<HeritageExplorerProps> = ({
   onStartTest,
   selectableMode = false,
   selectedProjectIds = [],
-  onToggleProjectSelection
+  onToggleProjectSelection,
+  isTestUnlocked = false
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLineFilter, setSelectedLineFilter] = useState<string>('all');
@@ -61,9 +63,9 @@ export const HeritageExplorer: React.FC<HeritageExplorerProps> = ({
       {/* Header */}
       <div className="max-w-3xl mb-8 space-y-3">
         <div className="inline-flex items-center gap-2 text-xs font-bold text-[#059669] tracking-wider uppercase">
-          <span>Memoria Científica</span>
+          <span>Semillero de Investigación LabSIE</span>
           <span aria-hidden="true">·</span>
-          <span>Patrimonio de LabSIE</span>
+          <span>Grupo EduTLAN (Categoría A MinCiencias)</span>
         </div>
 
         <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#24302F]" style={{ color: '#24302F' }}>
@@ -418,19 +420,32 @@ export const HeritageExplorer: React.FC<HeritageExplorerProps> = ({
       </div>
 
       {!selectableMode && onStartTest && (
-        <div className="mt-12 text-center p-8 rounded-2xl bg-[#FFFDF9] border-2 border-[#CCD4CF] shadow-sm">
+        <div className="mt-12 text-center p-8 rounded-2xl bg-[#FFFDF9] border-2 border-[#CCD4CF] shadow-sm max-w-2xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-xs font-bold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />
+            <span>Semillero de Investigación LabSIE · Grupo EduTLAN</span>
+          </div>
           <h2 className="font-serif text-xl md:text-2xl font-bold text-[#24302F]" style={{ color: '#24302F' }}>
-            ¿Sientes curiosidad por saber cómo conectar con estos proyectos?
+            ¿Sientes curiosidad por conectar tu vocación con estos proyectos?
           </h2>
-          <p className="text-xs md:text-sm text-[#526066] mt-2 max-w-xl mx-auto font-medium">
-            Realiza el test exploratorio de 8 a 12 minutos para identificar tu perfil y tu ruta investigativa sugerida.
+          <p className="text-xs md:text-sm text-[#526066] max-w-xl mx-auto font-medium leading-relaxed">
+            {isTestUnlocked
+              ? 'Tu ruta investigativa está activa. Realiza el test de exploración para vincularte formalmente a una de las investigaciones.'
+              : 'El test de exploración investigativa está reservado para estudiantes que deseen ingresar al Semillero LabSIE. Confirma tu vinculación para activar tu ruta.'}
           </p>
-          <button
-            onClick={onStartTest}
-            className="cursor-pointer mt-5 px-7 py-3.5 rounded-xl bg-[#10B981] text-[#FFFDF9] font-bold text-sm hover:bg-[#059669] transition-all shadow-md hover:shadow-lg border-2 border-[#10B981]"
-          >
-            Iniciar Test de Exploración
-          </button>
+          <div className="pt-2">
+            <button
+              onClick={onStartTest}
+              className={`cursor-pointer inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl font-bold text-sm transition-all shadow-md hover:shadow-lg border-2 ${
+                isTestUnlocked
+                  ? 'bg-[#10B981] text-[#FFFDF9] hover:bg-[#059669] border-[#10B981]'
+                  : 'bg-[#FFFDF9] text-[#1C2624] hover:bg-[#ECFDF5] border-[#059669]'
+              }`}
+            >
+              {!isTestUnlocked && <Lock className="w-4 h-4 text-[#B45309]" />}
+              <span>{isTestUnlocked ? 'Iniciar Test de Exploración (Ruta Activa)' : '¡Ingresar al Semillero y Activar Test!'}</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

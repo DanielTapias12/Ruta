@@ -10,7 +10,8 @@ const STORAGE_KEYS = {
   PROJECTS: 'labsie_research_projects_v10',
   LINES: 'labsie_research_lines_v10',
   ANALYSES: 'labsie_analysis_results_v10',
-  CURRENT_USER: 'labsie_current_user_v10'
+  CURRENT_USER: 'labsie_current_user_v10',
+  SEMILLERO_AFFILIATION: 'labsie_semillero_affiliation_v10'
 };
 
 export interface AppUser {
@@ -158,6 +159,34 @@ class StorageService {
         role: 'student'
       });
     }
+  }
+
+  // --- Semillero Affiliation & Route Activation ---
+  public getSemilleroAffiliation(): 'joined' | 'exploring' | null {
+    try {
+      const val = localStorage.getItem(STORAGE_KEYS.SEMILLERO_AFFILIATION);
+      if (val === 'joined' || val === 'exploring') return val;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  public setSemilleroAffiliation(status: 'joined' | 'exploring' | null) {
+    try {
+      if (status) {
+        localStorage.setItem(STORAGE_KEYS.SEMILLERO_AFFILIATION, status);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.SEMILLERO_AFFILIATION);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    this.notify();
+  }
+
+  public isTestUnlocked(): boolean {
+    return this.getSemilleroAffiliation() === 'joined';
   }
 
   // --- Projects CRUD ---

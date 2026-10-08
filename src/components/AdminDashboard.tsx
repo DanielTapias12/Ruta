@@ -180,17 +180,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#DDE2DE] pb-6">
         <div className="flex items-center gap-4">
           <LabSIELogo size="sm" className="shrink-0" />
-          <div className="border-l border-[#DDE2DE] pl-3">
+          <div className="border-l-2 border-[#CCD4CF] pl-3">
             <div className="inline-flex items-center gap-2 text-xs font-bold text-[#059669] uppercase tracking-wider">
-              <span>Coordinación Semillero</span>
+              <span>Semillero de Investigación LabSIE</span>
               <span aria-hidden="true">·</span>
-              <span>Grupo EduTLAN</span>
+              <span>Grupo EduTLAN (Categoría A MinCiencias)</span>
             </div>
-            <h1 className="font-serif text-2xl md:text-3xl font-bold text-[#24302F] mt-0.5" style={{ color: '#24302F' }}>
-              Panel de Orientación Investigativa
+            <h1 className="font-serif text-2xl md:text-3xl font-bold text-[#1C2624] mt-0.5" style={{ color: '#1C2624' }}>
+              Panel de Orientación & Vinculación
             </h1>
-            <p className="text-xs md:text-sm text-[#6F7976]">
-              Monitoreo, análisis de correspondencia y validación de vinculación científica.
+            <p className="text-xs md:text-sm text-[#3F4E4C] font-medium">
+              Gestión de postulaciones, validación de vinculación al semillero y asignación de proyectos.
             </p>
           </div>
         </div>
@@ -278,7 +278,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <span aria-hidden="true">·</span>
                   <span>Semestre {selectedAnalysis.studentProfile.semester}</span>
                   <span aria-hidden="true">·</span>
-                  <span>{selectedAnalysis.studentProfile.email}</span>
+                  <span>✉️ {selectedAnalysis.studentProfile.email}</span>
+                  {selectedAnalysis.studentProfile.phone && (
+                    <>
+                      <span aria-hidden="true">·</span>
+                      <span>📱 {selectedAnalysis.studentProfile.phone}</span>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -819,7 +825,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <tr key={a.id} className="hover:bg-[#F7F3ED] transition-colors">
                           <td className="py-3.5 px-4 font-bold text-[#1C2624]">
                             <div>{a.studentProfile.name}</div>
-                            <div className="text-[11px] text-[#3F4E4C] font-normal">{a.studentProfile.email}</div>
+                            <div className="text-[11px] text-[#3F4E4C] font-normal">
+                              {a.studentProfile.email}
+                              {a.studentProfile.phone && ` · Tel: ${a.studentProfile.phone}`}
+                            </div>
                           </td>
                           <td className="py-3.5 px-4 text-[#1C2624] font-medium">
                             <div>{a.studentProfile.program}</div>

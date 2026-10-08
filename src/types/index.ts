@@ -65,8 +65,10 @@ export interface ResearchProject {
 export interface StudentProfileData {
   name: string;
   email: string;
+  phone?: string; // Teléfono / WhatsApp institucional del estudiante
   program: 'Licenciatura en Informática';
   semester: string; // "1.º", "2.º", ... "10.º"
+  wantsToJoinLabSIE?: string; // Respuesta a "¿Quieres ser parte del Semillero de Investigación LabSIE?"
   researchExperience:
     | 'No, es mi primer acercamiento.'
     | 'He participado en actividades de investigación.'
@@ -78,6 +80,7 @@ export interface StudentProfileData {
 }
 
 export interface TestAnswers {
+  wantsToJoinLabSIE?: string; // Pregunta 1: Deseo de vinculación al Semillero LabSIE
   profile: StudentProfileData;
   // SECCIÓN 2 — TU CURIOSIDAD
   firstActionOnProblem: string; // Q7 (1 respuesta)

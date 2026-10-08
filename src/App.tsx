@@ -11,6 +11,7 @@ import { TestView } from './components/TestView';
 import { HeritageExplorer } from './components/HeritageExplorer';
 import { ResultsView } from './components/ResultsView';
 import { AdminDashboard } from './components/AdminDashboard';
+import { WelcomeModal } from './components/WelcomeModal';
 import { storageService, AppUser } from './services/storageService';
 import { ResearchProject, ResearchLine, AnalysisResult } from './types';
 
@@ -21,6 +22,13 @@ export default function App() {
   const [analyses, setAnalyses] = useState<AnalysisResult[]>([]);
   const [currentUser, setCurrentUser] = useState<AppUser>(storageService.getCurrentUser());
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisResult | null>(null);
+
+  // Semillero affiliation and popup modal state
+  // Requisito: La ventana emergente sale una vez se ingresa a la página
+  // Requisito: La ventana del test está bloqueada desde el inicio, solo cuando el usuario acepte hacer el test se activará
+  const [isTestUnlocked, setIsTestUnlocked] = useState<boolean>(false);
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState<boolean>(true);
+  const [welcomeModalMode, setWelcomeModalMode] = useState<'welcome' | 'locked-attempt'>('welcome');
 
   const loadData = () => {
     setProjects(storageService.getProjects());
@@ -47,6 +55,42 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Actions from WelcomeModal and Route Activation Menu
+  const handleJoinAndStartTest = () => {
+    storageService.setSemilleroAffiliation('joined');
+    setIsTestUnlocked(true);
+    setIsWelcomeModalOpen(false);
+    setCurrentView('test');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleActivateRoute = () => {
+    storageService.setSemilleroAffiliation('joined');
+    setIsTestUnlocked(true);
+    setIsWelcomeModalOpen(false);
+    setCurrentView('test');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDeactivateRoute = () => {
+    storageService.setSemilleroAffiliation('exploring');
+    setIsTestUnlocked(false);
+  };
+
+  const handleExploreBeforeTest = () => {
+    storageService.setSemilleroAffiliation('exploring');
+    setIsTestUnlocked(false);
+    setIsWelcomeModalOpen(false);
+    setCurrentView('heritage');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Direct navigation without aggressive popups
+  const handleNavigate = (view: 'welcome' | 'test' | 'heritage' | 'results' | 'admin') => {
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#F5EFE6] via-[#FAF8F5] to-[#F2EDE5] text-[#24302F] relative overflow-x-hidden">
       {/* Fondo institucional oficial — Detrás de TODO el contenido (-z-10) */}
@@ -64,24 +108,35 @@ export default function App() {
         <div className="absolute inset-0 bg-[#FAF8F5]/70 pointer-events-none" />
       </div>
 
-      {/* 3-Zone Header Contract */}
+      {/* 3-Zone Header Contract with Route Activation Menu */}
       <Header
         currentView={currentView}
-        onNavigate={view => {
-          setCurrentView(view);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onNavigate={handleNavigate}
         currentUser={currentUser}
+        isTestUnlocked={isTestUnlocked}
+        onOpenWelcomeModal={() => {
+          setWelcomeModalMode('welcome');
+          setIsWelcomeModalOpen(true);
+        }}
+        onActivateRoute={handleActivateRoute}
+        onDeactivateRoute={handleDeactivateRoute}
       />
 
       {/* Main View Router — Firmemente ADELANTE con z-index positivo */}
       <main className="flex-1 relative z-10" style={{ position: 'relative', zIndex: 10 }}>
         {currentView === 'welcome' && (
           <WelcomeView
-            onStartTest={() => setCurrentView('test')}
-            onExploreHeritage={() => setCurrentView('heritage')}
+            onStartTest={() => handleNavigate('test')}
+            onExploreHeritage={() => handleNavigate('heritage')}
             projects={projects}
             lines={lines}
+            isTestUnlocked={isTestUnlocked}
+            onOpenWelcomeModal={() => {
+              setWelcomeModalMode('welcome');
+              setIsWelcomeModalOpen(true);
+            }}
+            onActivateRoute={handleActivateRoute}
+            onDeactivateRoute={handleDeactivateRoute}
           />
         )}
 
@@ -90,7 +145,14 @@ export default function App() {
             projects={projects}
             lines={lines}
             onTestComplete={handleTestComplete}
-            onCancel={() => setCurrentView('welcome')}
+            onCancel={() => handleNavigate('welcome')}
+            isTestUnlocked={isTestUnlocked}
+            onActivateRoute={handleActivateRoute}
+            onOpenWelcomeModal={() => {
+              setWelcomeModalMode('welcome');
+              setIsWelcomeModalOpen(true);
+            }}
+            onExploreHeritage={() => handleNavigate('heritage')}
           />
         )}
 
@@ -98,15 +160,16 @@ export default function App() {
           <HeritageExplorer
             projects={projects}
             lines={lines}
-            onStartTest={() => setCurrentView('test')}
+            onStartTest={() => handleNavigate('test')}
+            isTestUnlocked={isTestUnlocked}
           />
         )}
 
         {currentView === 'results' && activeAnalysis && (
           <ResultsView
             analysis={activeAnalysis}
-            onExploreHeritage={() => setCurrentView('heritage')}
-            onRetakeTest={() => setCurrentView('test')}
+            onExploreHeritage={() => handleNavigate('heritage')}
+            onRetakeTest={() => handleNavigate('test')}
           />
         )}
 
@@ -122,6 +185,16 @@ export default function App() {
 
       {/* Institutional Footer */}
       <Footer />
+
+      {/* Ventana emergente al inicio: Bienvenida, Promoción, Logotipos Grandes y Decisión */}
+      <WelcomeModal
+        isOpen={isWelcomeModalOpen}
+        onClose={() => setIsWelcomeModalOpen(false)}
+        onJoinAndStartTest={handleJoinAndStartTest}
+        onExploreBeforeTest={handleExploreBeforeTest}
+        mode={welcomeModalMode}
+        totalProjectsCount={projects.length}
+      />
     </div>
   );
 }

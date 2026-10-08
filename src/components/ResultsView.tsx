@@ -14,6 +14,7 @@ import { AnalysisResult, RouteType } from '../types';
 import { generatePDFReport, generateDOCXReport } from '../services/documentGenerator';
 import { getProjectMethodology } from '../data/projectMetadata';
 import { LabSIELogo } from './LabSIELogo';
+import { EduTLANLogo } from './EduTLANLogo';
 
 interface ResultsViewProps {
   analysis: AnalysisResult;
@@ -92,12 +93,19 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
       <div className="bg-[#FFFDF9] border-2 border-[#CCD4CF] rounded-2xl p-6 md:p-10 shadow-sm space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b-2 border-[#CCD4CF] pb-6">
           <div className="space-y-2">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <LabSIELogo size="sm" className="shrink-0" />
+              <div className="h-8 w-px bg-[#CCD4CF] hidden sm:block" />
+              <EduTLANLogo size="sm" showCategoryBadge={true} className="shrink-0" />
               <div className="border-l-2 border-[#CCD4CF] pl-3">
-                <span className="text-[11px] font-bold text-[#059669] uppercase tracking-wider block">
-                  Informe Oficial de Orientación Investigativa
-                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[11px] font-bold text-[#059669] uppercase tracking-wider block">
+                    Semillero de Investigación LabSIE · Grupo EduTLAN
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] text-[10px] font-bold">
+                    Ruta Activada
+                  </span>
+                </div>
                 <span className="text-xs text-[#1C2624] font-medium">
                   Estudiante: <strong className="text-[#059669]">{analysis.studentProfile.name}</strong>
                 </span>
@@ -107,7 +115,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               Tu ruta investigativa sugerida
             </h1>
             <p className="text-sm font-semibold text-[#1C2624]">
-              {analysis.studentProfile.program} · Semestre {analysis.studentProfile.semester}
+              {analysis.studentProfile.program} · Semestre {analysis.studentProfile.semester} · ✉️ {analysis.studentProfile.email}
+              {analysis.studentProfile.phone && ` · 📱 ${analysis.studentProfile.phone}`}
             </p>
           </div>
 

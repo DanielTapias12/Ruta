@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Compass, Library, Sparkles, BookOpen, GitFork, CheckCircle, Layers } from 'lucide-react';
+import { ArrowRight, Compass, Library, Sparkles, BookOpen, GitFork, CheckCircle, Layers, Lock } from 'lucide-react';
 import { ResearchProject, ResearchLine } from '../types';
 import { LabSIELogo } from './LabSIELogo';
 import { EduTLANLogo } from './EduTLANLogo';
@@ -9,67 +9,124 @@ interface WelcomeViewProps {
   onExploreHeritage: () => void;
   projects: ResearchProject[];
   lines?: ResearchLine[];
+  isTestUnlocked?: boolean;
+  onOpenWelcomeModal?: () => void;
+  onActivateRoute?: () => void;
+  onDeactivateRoute?: () => void;
 }
 
 export const WelcomeView: React.FC<WelcomeViewProps> = ({
   onStartTest,
   onExploreHeritage,
   projects,
-  lines = []
+  lines = [],
+  isTestUnlocked = false,
+  onOpenWelcomeModal,
+  onActivateRoute,
+  onDeactivateRoute
 }) => {
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 md:py-16 relative">
-      {/* Editorial Header / Hero Section with Official Institutional Logo */}
-      <div className="text-center max-w-3xl mx-auto space-y-6">
-        {/* Logotipo Oficial LabSIE · Grupo EduTLAN */}
+      {/* Editorial Header / Hero Section with BOTH OFFICIAL LOGOS EXTRA LARGE & PROMOTIONAL INVITATION */}
+      <div className="text-center max-w-4xl mx-auto space-y-6">
+        {/* Banner Promocional de Convocatoria */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ECFDF5] text-[#059669] border-2 border-[#A7F3D0] text-xs font-bold uppercase tracking-wider shadow-xs">
+          <Sparkles className="w-4 h-4 text-[#10B981]" />
+          <span>Convocatoria de Promoción e Invitación · Licenciatura en Informática</span>
+        </div>
+
+        {/* LOGOTIPOS OFICIALES JUNTOS Y MÁS GRANDES (LABSIE & EDUTLAN) */}
         <div className="flex flex-col items-center justify-center mb-2">
-          <div className="p-4 sm:p-5 rounded-2xl bg-[#FFFDF9] border-2 border-[#CCD4CF] shadow-xs inline-flex flex-col items-center max-w-full">
-            <LabSIELogo size="lg" className="hover:scale-[1.01] transition-transform" />
-            <div className="mt-3 pt-2.5 border-t border-[#DDE2DE] flex flex-wrap items-center justify-center gap-2 text-[11px] font-bold text-[#526066]">
-              <span className="px-2.5 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+          <div className="p-5 sm:p-7 rounded-3xl bg-[#FFFDF9] border-2 border-[#CCD4CF] shadow-md flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 max-w-full">
+            {/* Logo 1: LabSIE (Microchip, Cerebro, Wordmark) */}
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#059669] mb-1.5">
                 Semillero de Investigación
               </span>
-              <span className="text-[#CCD4CF]" aria-hidden="true">·</span>
-              <span className="px-2.5 py-0.5 rounded bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D]">
-                Grupo EduTLAN (Cat. A MinCiencias)
+              <LabSIELogo size="xl" className="hover:scale-[1.02] transition-transform" />
+            </div>
+
+            {/* Institutional Divider */}
+            <div className="hidden md:block w-px h-28 bg-[#CCD4CF]" aria-hidden="true" />
+            <div className="block md:hidden w-36 h-px bg-[#CCD4CF]" aria-hidden="true" />
+
+            {/* Logo 2: EduTLAN (Education, Technology, Language, MinCiencias COL0065564, Medalla A) */}
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#92400E] mb-1.5">
+                Grupo EduTLAN (Categoría A MinCiencias)
               </span>
-              <span className="text-[#CCD4CF]" aria-hidden="true">·</span>
-              <span className="text-[#24302F]">Universidad de Córdoba</span>
+              <EduTLANLogo size="xl" showCategoryBadge={true} className="hover:scale-[1.02] transition-transform" />
             </div>
           </div>
         </div>
 
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#24302F] leading-tight text-balance" style={{ color: '#24302F' }}>
-          Descubre dónde podría comenzar tu investigación.
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#1C2624] leading-tight text-balance">
+          ¡Te invitamos a ser parte del Semillero de Investigación LabSIE!
         </h1>
 
-        <p className="font-serif italic text-lg md:text-xl text-[#059669]">
-          "De tus intereses a una posible investigación."
+        <p className="font-serif italic text-lg md:text-xl text-[#059669] font-bold">
+          "De tu curiosidad personal a una ruta de investigación real en el Grupo EduTLAN."
         </p>
 
-        <p className="text-[#24302F] text-base md:text-lg leading-relaxed text-pretty font-normal" style={{ color: '#24302F' }}>
-          No necesitas tener un proyecto definido. Esta experiencia analiza tus intereses,
-          curiosidades y formas de abordar problemas para ayudarte a encontrar posibles caminos
-          de investigación dentro del patrimonio investigativo de LabSIE.
-        </p>
+        {/* Tarjeta Promocional de Invitación Formativa */}
+        <div className="p-5 md:p-6 rounded-2xl bg-[#FAF8F5] border-2 border-[#CCD4CF] text-left space-y-3 shadow-xs">
+          <div className="flex items-center gap-2.5 text-[#059669] font-bold text-sm">
+            <Compass className="w-5 h-5 text-[#10B981]" />
+            <span>Invitación para Estudiantes de la Licenciatura en Informática (Universidad de Córdoba):</span>
+          </div>
+          <p className="text-[#1C2624] text-sm md:text-base leading-relaxed font-normal">
+            ¿Te apasiona la <strong>Inteligencia Artificial</strong>, la creación de <strong>entornos virtuales y videojuegos pedagógicos</strong>, la <strong>analítica de datos</strong> o la <strong>innovación didáctica</strong>? El <strong>Semillero de Investigación LabSIE</strong> del <strong>Grupo EduTLAN</strong> abre sus puertas para que desarrolles tus competencias investigativas, participes en proyectos reales, publiques ponencias y consolides tu trabajo de grado.
+          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#CCD4CF]">
+            <p className="text-xs text-[#059669] font-bold">
+              ✨ El test de exploración se activará exclusivamente al manifestar tu deseo de ingresar al semillero.
+            </p>
+            {onOpenWelcomeModal && (
+              <button
+                type="button"
+                onClick={onOpenWelcomeModal}
+                className="cursor-pointer text-xs font-bold text-[#059669] hover:text-[#047857] underline underline-offset-2 flex items-center gap-1"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Ver detalles de la invitación</span>
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* CTAs with strong background contrast */}
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
-            onClick={onStartTest}
-            className="cursor-pointer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-[#10B981] text-[#FFFDF9] font-bold text-base hover:bg-[#059669] transition-all shadow-md hover:shadow-lg border-2 border-[#10B981] group"
+            type="button"
+            onClick={() => {
+              if (!isTestUnlocked) {
+                if (onOpenWelcomeModal) onOpenWelcomeModal();
+              } else {
+                onStartTest();
+              }
+            }}
+            className="cursor-pointer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#10B981] text-[#FFFDF9] font-bold text-base hover:bg-[#059669] transition-all shadow-md hover:shadow-lg border-2 border-[#10B981] group"
           >
-            <span>Comenzar exploración</span>
+            {!isTestUnlocked ? (
+              <>
+                <Lock className="w-5 h-5 text-[#FFFDF9] shrink-0" />
+                <span>¡Quiero ingresar! Activar mi Ruta</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5 text-[#FFFDF9] shrink-0" />
+                <span>¡Ir al Test de Exploración! (Ruta Activa)</span>
+              </>
+            )}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
 
           <button
             onClick={onExploreHeritage}
-            className="cursor-pointer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl border-2 border-[#10B981] bg-[#FFFDF9] text-[#24302F] font-bold text-base hover:bg-[#ECFDF5] hover:border-[#059669] transition-all shadow-sm hover:shadow-md"
-            style={{ color: '#24302F' }}
+            className="cursor-pointer w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[#CCD4CF] bg-[#FFFDF9] text-[#1C2624] font-bold text-sm sm:text-base hover:bg-[#ECFDF5] hover:border-[#059669] transition-all shadow-sm hover:shadow-md"
           >
             <Library className="w-5 h-5 text-[#10B981] shrink-0" />
-            <span style={{ color: '#24302F' }}>Conocer LabSIE ({projects.length} proyectos)</span>
+            <span>Explorar Investigaciones ({projects.length} proyectos)</span>
           </button>
         </div>
       </div>
