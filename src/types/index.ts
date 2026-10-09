@@ -77,6 +77,8 @@ export interface StudentProfileData {
     | string;
   techExperience: 'Básico' | 'Intermedio' | 'Avanzado' | 'Muy avanzado' | string;
   aiExperience: 'Nunca' | 'Algunas veces' | 'Ocasionalmente' | 'Frecuentemente' | 'Habitualmente' | string;
+  termsAccepted?: boolean; // Aceptación expresa Ley 1581 de 2012 (Habeas Data)
+  termsAcceptedAt?: string;
 }
 
 export interface TestAnswers {
